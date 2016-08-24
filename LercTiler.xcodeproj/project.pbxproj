@@ -25,9 +25,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		7D6307D21D5AC0B200DCEA6C /* mac_debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = mac_debug.xcconfig; path = config/mac_debug.xcconfig; sourceTree = "<group>"; };
 		7DBB8C771D5D6AFE005B7A34 /* LercTilerCmd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LercTilerCmd; sourceTree = BUILT_PRODUCTS_DIR; };
-		7DBB8C7F1D5D6BFD005B7A34 /* mac_common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = mac_common.xcconfig; path = config/mac_common.xcconfig; sourceTree = "<group>"; };
 		7DBB8C821D5D6C72005B7A34 /* lerc_util.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lerc_util.cc; sourceTree = "<group>"; };
 		7DBB8C831D5D6C72005B7A34 /* lerc_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lerc_util.h; sourceTree = "<group>"; };
 		7DBB8C861D5D6D15005B7A34 /* macros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macros.h; sourceTree = "<group>"; };
@@ -36,6 +34,8 @@
 		7DDB0F5D1D6D9B840064FF3C /* main.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cc; path = proj.cmd/main.cc; sourceTree = SOURCE_ROOT; };
 		7DDB0F5F1D6D9FF20064FF3C /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		7DDB0F601D6D9FF90064FF3C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		7DDB0F611D6DA0E60064FF3C /* mac_common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = mac_common.xcconfig; path = config/mac_common.xcconfig; sourceTree = SOURCE_ROOT; };
+		7DDB0F621D6DA0E60064FF3C /* mac_debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = mac_debug.xcconfig; path = config/mac_debug.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,8 +72,8 @@
 		7DBB8C6E1D5D6941005B7A34 /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				7DBB8C7F1D5D6BFD005B7A34 /* mac_common.xcconfig */,
-				7D6307D21D5AC0B200DCEA6C /* mac_debug.xcconfig */,
+				7DDB0F611D6DA0E60064FF3C /* mac_common.xcconfig */,
+				7DDB0F621D6DA0E60064FF3C /* mac_debug.xcconfig */,
 			);
 			name = Config;
 			path = LercTiler;
@@ -168,7 +168,7 @@
 /* Begin XCBuildConfiguration section */
 		7D6307A81D5AB85900DCEA6C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7DBB8C7F1D5D6BFD005B7A34 /* mac_common.xcconfig */;
+			baseConfigurationReference = 7DDB0F611D6DA0E60064FF3C /* mac_common.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -213,7 +213,7 @@
 		};
 		7D6307A91D5AB85900DCEA6C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7DBB8C7F1D5D6BFD005B7A34 /* mac_common.xcconfig */;
+			baseConfigurationReference = 7DDB0F611D6DA0E60064FF3C /* mac_common.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -251,7 +251,7 @@
 		};
 		7DBB8C7C1D5D6AFE005B7A34 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7D6307D21D5AC0B200DCEA6C /* mac_debug.xcconfig */;
+			baseConfigurationReference = 7DDB0F621D6DA0E60064FF3C /* mac_debug.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -259,7 +259,6 @@
 		};
 		7DBB8C7D1D5D6AFE005B7A34 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7D6307D21D5AC0B200DCEA6C /* mac_debug.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

@@ -107,12 +107,6 @@ int main(int argc, const char * argv[]) {
   uint32_t band = 0;
   double max_z_error = 0; // losses
   
-  // fake test
-  input_folder_path = "/Users/FrankLin/Downloads/lerc2_test_src/A2016185.ndvi";
-  output_folder_path = "/Users/FrankLin/Downloads/lerc2_test_dist";
-  band = 1;
-  max_z_error = 0;
-  
   // parse input arguments
   for (int i = 0; i < argc; ++i) {
     if (0 == strcmp("--input", argv[i])) {
