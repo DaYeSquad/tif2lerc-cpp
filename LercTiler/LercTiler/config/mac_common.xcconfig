@@ -1,0 +1,13 @@
+//
+//  mac_common.xcconfig
+//  LercTiler
+//
+//  Created by Frank Lin on 8/10/16.
+//  Copyright © 2016 Frank Lin. All rights reserved.
+//
+
+HEADER_SEARCH_PATHS = vendor/libpng/include/mac/ vendor/libtiff/include/mac/ vendor/lerc/include/mac/
+
+LIBRARY_SEARCH_PATHS = vendor/libpng/prebuilt/mac/ vendor/libtiff/prebuilt/mac/ vendor/lerc/prebuilt/mac/
+
+OTHER_LDFLAGS = -lpng -lz -ltiff -llerc
