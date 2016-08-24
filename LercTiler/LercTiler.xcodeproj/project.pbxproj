@@ -11,7 +11,7 @@
 		7D6307A11D5AB85900DCEA6C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D6307A01D5AB85900DCEA6C /* main.m */; };
 		7D6307A31D5AB85900DCEA6C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D6307A21D5AB85900DCEA6C /* Assets.xcassets */; };
 		7D6307A61D5AB85900DCEA6C /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D6307A41D5AB85900DCEA6C /* MainMenu.xib */; };
-		7DBB8C7A1D5D6AFE005B7A34 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7DBB8C791D5D6AFE005B7A34 /* main.mm */; };
+		7DBB8C7A1D5D6AFE005B7A34 /* main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7DBB8C791D5D6AFE005B7A34 /* main.cc */; };
 		7DBB8C841D5D6C72005B7A34 /* lerc_util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7DBB8C821D5D6C72005B7A34 /* lerc_util.cc */; };
 		7DBB8C851D5D6C72005B7A34 /* lerc_util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7DBB8C821D5D6C72005B7A34 /* lerc_util.cc */; };
 		7DBB8C891D5D7355005B7A34 /* logger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7DBB8C871D5D7355005B7A34 /* logger.cc */; };
@@ -40,7 +40,7 @@
 		7D6307A71D5AB85900DCEA6C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D6307D21D5AC0B200DCEA6C /* mac_debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = mac_debug.xcconfig; path = config/mac_debug.xcconfig; sourceTree = "<group>"; };
 		7DBB8C771D5D6AFE005B7A34 /* LercTilerCmd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LercTilerCmd; sourceTree = BUILT_PRODUCTS_DIR; };
-		7DBB8C791D5D6AFE005B7A34 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+		7DBB8C791D5D6AFE005B7A34 /* main.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cc; sourceTree = "<group>"; };
 		7DBB8C7F1D5D6BFD005B7A34 /* mac_common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = mac_common.xcconfig; path = config/mac_common.xcconfig; sourceTree = "<group>"; };
 		7DBB8C801D5D6BFD005B7A34 /* mac_release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = mac_release.xcconfig; path = config/mac_release.xcconfig; sourceTree = "<group>"; };
 		7DBB8C821D5D6C72005B7A34 /* lerc_util.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lerc_util.cc; sourceTree = "<group>"; };
@@ -147,7 +147,7 @@
 		7DBB8C781D5D6AFE005B7A34 /* LercTilerCmd */ = {
 			isa = PBXGroup;
 			children = (
-				7DBB8C791D5D6AFE005B7A34 /* main.mm */,
+				7DBB8C791D5D6AFE005B7A34 /* main.cc */,
 			);
 			path = LercTilerCmd;
 			sourceTree = "<group>";
@@ -266,7 +266,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7DBB8C8A1D5D7355005B7A34 /* logger.cc in Sources */,
-				7DBB8C7A1D5D6AFE005B7A34 /* main.mm in Sources */,
+				7DBB8C7A1D5D6AFE005B7A34 /* main.cc in Sources */,
 				7DBB8C851D5D6C72005B7A34 /* lerc_util.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

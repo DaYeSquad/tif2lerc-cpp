@@ -46,11 +46,27 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
   uint32_t height = 0;
   tdata_t buf;
   
+  uint32_t tiff_dt = 0;
+  
   TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width);
   TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height);
+  TIFFGetField(tif, TIFFTAG_DATATYPE, &tiff_dt);
+  Logger::LogD("Get TIFF data type is %d", tiff_dt);
+  
+  uint32_t type_size = 0;
+  if (tiff_dt == SAMPLEFORMAT_INT) {
+    data_type = DataType::INT;
+    type_size = 4;
+  } else if (tiff_dt == SAMPLEFORMAT_IEEEFP) {
+    data_type = DataType::FLOAT;
+    type_size = 4;
+  } else {
+    Logger::LogD("Unsupported TIFF data format");
+    return false;
+  }
   
   // data
-  float* data = new float[width * height];
+  unsigned char* data = new unsigned char[width * height * type_size];
   
   size_t line_size = TIFFScanlineSize(tif);
   
@@ -58,7 +74,7 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
     buf = _TIFFmalloc(line_size);
     TIFFReadScanline(tif, buf, row);
     
-    memcpy(data + width * row, buf, line_size);
+    memcpy(data + width * row * type_size, buf, line_size);
     
     _TIFFfree(buf);
   }
@@ -76,6 +92,8 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
     lerc_dt = LercNS::Lerc::DT_Float;
   } else if (data_type == LercUtil::DataType::BYTE) {
     lerc_dt = LercNS::Lerc::DT_Byte;
+  } else if (data_type == LercUtil::DataType::INT) {
+    lerc_dt = LercNS::Lerc::DT_Int;
   } else {
     Logger::LogD("ERROR input data type %s\n", path_to_file.c_str());
     return false;

@@ -1,0 +1,11 @@
+//
+//  mac_debug.xcconfig
+//  LercTiler
+//
+//  Created by Frank Lin on 8/10/16.
+//  Copyright © 2016 Frank Lin. All rights reserved.
+//
+
+#include "mac_common.xcconfig"
+
+GCC_PREPROCESSOR_DEFINITIONS = SKR_PLATFORM=SKR_PLATFORM_MAC LOG_DEBUG

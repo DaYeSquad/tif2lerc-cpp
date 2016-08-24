@@ -11,3 +11,5 @@ HEADER_SEARCH_PATHS = vendor/libpng/include/mac/ vendor/libtiff/include/mac/ ven
 LIBRARY_SEARCH_PATHS = vendor/libpng/prebuilt/mac/ vendor/libtiff/prebuilt/mac/ vendor/lerc/prebuilt/mac/
 
 OTHER_LDFLAGS = -lpng -lz -ltiff -llerc
+
+GCC_PREPROCESSOR_DEFINITIONS = SKR_PLATFORM=SKR_PLATFORM_MAC

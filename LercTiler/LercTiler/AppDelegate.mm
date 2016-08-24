@@ -8,14 +8,22 @@
 
 #import "AppDelegate.h"
 
-#include "Lerc.h"
+#include "Lerc/Lerc.h"
 #include "png.h"
 #include "tiffio.h"
 #include "lerc_util.h"
 
-NSString *inputTiffPath = @"/Users/FrankLin/Documents/Xcode/gago/geotiff2lerc/test.tif";
+NSString *inputTiff2Path = @"/Users/FrankLin/Documents/Xcode/gago/geotiff2lerc/test.tif";
+NSString *inputTiffPath = @"/Users/FrankLin/Downloads/lerc2_test_src/A2016185.ndvi/3/6/3.tiff";
+
 NSString *inputPngPath = @"/Users/FrankLin/Documents/Xcode/gago/png2lerc/test2.png";
+
 NSString *outputLercPath = @"/Users/FrankLin/Documents/Xcode/gago/geotiff2lerc/test.lerc";
+//NSString *outputLercPath = @"/Users/FrankLin/Downloads/lerc2_test_dist/4/13/5.lerc";
+//NSString *outputLercPath = @"/Users/FrankLin/Downloads/lerc2_test_dist/3/6/3.lerc";
+//NSString *outputLercPath = @"/Users/FrankLin/Downloads/lerc2_test_dist/3/7/3.lerc";
+
+NSString *jsonOutputPath = @"/Users/FrankLin/Documents/Xcode/gago/geotiff2lerc/test.json";
 
 typedef struct
 {
@@ -48,7 +56,7 @@ static void pngReadCallback(png_structp png_ptr, png_bytep data, png_size_t leng
 @implementation AppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-//  [self testLercUtils];
+   [self testLercUtils];
   [self testReadLerc2Info];
 }
 
@@ -59,9 +67,9 @@ static void pngReadCallback(png_structp png_ptr, png_bytep data, png_size_t leng
 - (void)testLercUtils {
   bool result = gago::LercUtil::EncodeTiffOrDie([inputTiffPath UTF8String],
                                                 [outputLercPath UTF8String],
-                                                0.1 - 0.0001,
+                                                0,
                                                 gago::LercUtil::LercVersion::V2_3,
-                                                gago::LercUtil::DataType::FLOAT,
+                                                gago::LercUtil::DataType::UNKNOWN,
                                                 1);
   NSLog(@"Tiff to lerc successed %d", result);
 }
@@ -83,7 +91,7 @@ static void pngReadCallback(png_structp png_ptr, png_bytep data, png_size_t leng
   TIFFGetField(tif, EXIFTAG_COLORSPACE, &color_space);
 
   // data
-  float* data = new float[width * height];
+  int* data = new int[width * height];
 
   size_t line_size = TIFFScanlineSize(tif);
   printf("scan line size is %zu\n", line_size);
@@ -386,9 +394,27 @@ static void pngReadCallback(png_structp png_ptr, png_bytep data, png_size_t leng
               lerc_info.nBands,
               lerc_info.dt,
               uncompressedData);
-  free(uncompressedData);
   
-  NSLog(@"The lerc version is %d", lerc_info.version);
+  NSLog(@"The lerc version is %d, num valid pixels is %d", lerc_info.version, lerc_info.numValidPixel);
+  
+  NSMutableArray *valuesArray = [NSMutableArray array];
+  int numNotZero = 0;
+  int* values = static_cast<int*>(uncompressedData);
+  for (int i = 0; i < 1001 * 1001; i++) {
+    [valuesArray addObject:@(values[i])];
+    if (values[i] != 0) {
+      //printf("index %d is %d\n", i, values[i]);
+      numNotZero++;
+    }
+  }
+  printf("num not zero is %d", numNotZero);
+  
+  NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+  [dict setValue:valuesArray forKey:@"values"];
+  NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:nil];
+  [jsonData writeToFile:jsonOutputPath atomically:NO];
+  
+  free(uncompressedData);
 }
 
 @end
