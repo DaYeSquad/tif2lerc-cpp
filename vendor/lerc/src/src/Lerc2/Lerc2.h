@@ -1328,7 +1328,6 @@ bool Lerc2::ComputeHistoForHuffman(const T* data, std::vector<int>& histo) const
 
   if (m_headerInfo.numValidPixel == width * height)    // all valid
   {
-    printf("DEBUG: width is %d, height is %d\n", width, height);
     for (int k = 0, i = 0; i < height; i++)
       for (int j = 0; j < width; j++, k++)
       {
