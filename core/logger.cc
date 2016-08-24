@@ -36,7 +36,7 @@ static const int kMaxLogLen = 2048;
 
 void Logger::LogD(const char*format, ... ) {
 #ifdef LOG_DEBUG
-  printf("DEBUG : ");
+  printf("");
   char buf[kMaxLogLen+1] = {0};
   va_list ap;
   va_start(ap, format);

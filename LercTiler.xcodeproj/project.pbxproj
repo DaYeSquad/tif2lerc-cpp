@@ -7,15 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7D63079E1D5AB85900DCEA6C /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7D63079D1D5AB85900DCEA6C /* AppDelegate.mm */; };
-		7D6307A11D5AB85900DCEA6C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D6307A01D5AB85900DCEA6C /* main.m */; };
-		7D6307A31D5AB85900DCEA6C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D6307A21D5AB85900DCEA6C /* Assets.xcassets */; };
-		7D6307A61D5AB85900DCEA6C /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D6307A41D5AB85900DCEA6C /* MainMenu.xib */; };
-		7DBB8C7A1D5D6AFE005B7A34 /* main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7DBB8C791D5D6AFE005B7A34 /* main.cc */; };
-		7DBB8C841D5D6C72005B7A34 /* lerc_util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7DBB8C821D5D6C72005B7A34 /* lerc_util.cc */; };
 		7DBB8C851D5D6C72005B7A34 /* lerc_util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7DBB8C821D5D6C72005B7A34 /* lerc_util.cc */; };
-		7DBB8C891D5D7355005B7A34 /* logger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7DBB8C871D5D7355005B7A34 /* logger.cc */; };
 		7DBB8C8A1D5D7355005B7A34 /* logger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7DBB8C871D5D7355005B7A34 /* logger.cc */; };
+		7DDB0F5E1D6D9B840064FF3C /* main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7DDB0F5D1D6D9B840064FF3C /* main.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,33 +25,20 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		7D6307991D5AB85900DCEA6C /* LercTiler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LercTiler.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		7D63079C1D5AB85900DCEA6C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		7D63079D1D5AB85900DCEA6C /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
-		7D6307A01D5AB85900DCEA6C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		7D6307A21D5AB85900DCEA6C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		7D6307A51D5AB85900DCEA6C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		7D6307A71D5AB85900DCEA6C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D6307D21D5AC0B200DCEA6C /* mac_debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = mac_debug.xcconfig; path = config/mac_debug.xcconfig; sourceTree = "<group>"; };
 		7DBB8C771D5D6AFE005B7A34 /* LercTilerCmd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LercTilerCmd; sourceTree = BUILT_PRODUCTS_DIR; };
-		7DBB8C791D5D6AFE005B7A34 /* main.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cc; sourceTree = "<group>"; };
 		7DBB8C7F1D5D6BFD005B7A34 /* mac_common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = mac_common.xcconfig; path = config/mac_common.xcconfig; sourceTree = "<group>"; };
-		7DBB8C801D5D6BFD005B7A34 /* mac_release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = mac_release.xcconfig; path = config/mac_release.xcconfig; sourceTree = "<group>"; };
 		7DBB8C821D5D6C72005B7A34 /* lerc_util.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lerc_util.cc; sourceTree = "<group>"; };
 		7DBB8C831D5D6C72005B7A34 /* lerc_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lerc_util.h; sourceTree = "<group>"; };
 		7DBB8C861D5D6D15005B7A34 /* macros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macros.h; sourceTree = "<group>"; };
 		7DBB8C871D5D7355005B7A34 /* logger.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = logger.cc; sourceTree = "<group>"; };
 		7DBB8C881D5D7355005B7A34 /* logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logger.h; sourceTree = "<group>"; };
+		7DDB0F5D1D6D9B840064FF3C /* main.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cc; path = proj.cmd/main.cc; sourceTree = SOURCE_ROOT; };
+		7DDB0F5F1D6D9FF20064FF3C /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		7DDB0F601D6D9FF90064FF3C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		7D6307961D5AB85900DCEA6C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		7DBB8C741D5D6AFE005B7A34 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -71,83 +52,38 @@
 		7D6307901D5AB85900DCEA6C = {
 			isa = PBXGroup;
 			children = (
+				7DDB0F601D6D9FF90064FF3C /* README.md */,
+				7DDB0F5F1D6D9FF20064FF3C /* LICENSE */,
 				7DBB8C6E1D5D6941005B7A34 /* Config */,
 				7DBB8C811D5D6C1C005B7A34 /* core */,
-				7D63079B1D5AB85900DCEA6C /* LercTiler */,
 				7DBB8C781D5D6AFE005B7A34 /* LercTilerCmd */,
-				7D63079A1D5AB85900DCEA6C /* Products */,
 			);
 			sourceTree = "<group>";
 		};
 		7D63079A1D5AB85900DCEA6C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7D6307991D5AB85900DCEA6C /* LercTiler.app */,
 				7DBB8C771D5D6AFE005B7A34 /* LercTilerCmd */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		7D63079B1D5AB85900DCEA6C /* LercTiler */ = {
-			isa = PBXGroup;
-			children = (
-				7DBB8C711D5D699A005B7A34 /* Classes */,
-				7DBB8C721D5D69AC005B7A34 /* View */,
-				7DBB8C701D5D6983005B7A34 /* Assets */,
-				7D63079F1D5AB85900DCEA6C /* Supporting Files */,
-			);
-			path = LercTiler;
-			sourceTree = "<group>";
-		};
-		7D63079F1D5AB85900DCEA6C /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				7D6307A01D5AB85900DCEA6C /* main.m */,
-			);
-			name = "Supporting Files";
+			path = ..;
 			sourceTree = "<group>";
 		};
 		7DBB8C6E1D5D6941005B7A34 /* Config */ = {
 			isa = PBXGroup;
 			children = (
 				7DBB8C7F1D5D6BFD005B7A34 /* mac_common.xcconfig */,
-				7DBB8C801D5D6BFD005B7A34 /* mac_release.xcconfig */,
 				7D6307D21D5AC0B200DCEA6C /* mac_debug.xcconfig */,
 			);
 			name = Config;
 			path = LercTiler;
 			sourceTree = "<group>";
 		};
-		7DBB8C701D5D6983005B7A34 /* Assets */ = {
-			isa = PBXGroup;
-			children = (
-				7D6307A21D5AB85900DCEA6C /* Assets.xcassets */,
-				7D6307A71D5AB85900DCEA6C /* Info.plist */,
-			);
-			name = Assets;
-			sourceTree = "<group>";
-		};
-		7DBB8C711D5D699A005B7A34 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-				7D63079C1D5AB85900DCEA6C /* AppDelegate.h */,
-				7D63079D1D5AB85900DCEA6C /* AppDelegate.mm */,
-			);
-			name = Classes;
-			sourceTree = "<group>";
-		};
-		7DBB8C721D5D69AC005B7A34 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				7D6307A41D5AB85900DCEA6C /* MainMenu.xib */,
-			);
-			name = View;
-			sourceTree = "<group>";
-		};
 		7DBB8C781D5D6AFE005B7A34 /* LercTilerCmd */ = {
 			isa = PBXGroup;
 			children = (
-				7DBB8C791D5D6AFE005B7A34 /* main.cc */,
+				7DDB0F5D1D6D9B840064FF3C /* main.cc */,
+				7D63079A1D5AB85900DCEA6C /* Products */,
 			);
 			path = LercTilerCmd;
 			sourceTree = "<group>";
@@ -167,23 +103,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		7D6307981D5AB85900DCEA6C /* LercTiler */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 7D6307AA1D5AB85900DCEA6C /* Build configuration list for PBXNativeTarget "LercTiler" */;
-			buildPhases = (
-				7D6307951D5AB85900DCEA6C /* Sources */,
-				7D6307961D5AB85900DCEA6C /* Frameworks */,
-				7D6307971D5AB85900DCEA6C /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = LercTiler;
-			productName = LercTiler;
-			productReference = 7D6307991D5AB85900DCEA6C /* LercTiler.app */;
-			productType = "com.apple.product-type.application";
-		};
 		7DBB8C761D5D6AFE005B7A34 /* LercTilerCmd */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7DBB8C7B1D5D6AFE005B7A34 /* Build configuration list for PBXNativeTarget "LercTilerCmd" */;
@@ -210,9 +129,6 @@
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Frank Lin";
 				TargetAttributes = {
-					7D6307981D5AB85900DCEA6C = {
-						CreatedOnToolsVersion = 7.3.1;
-					};
 					7DBB8C761D5D6AFE005B7A34 = {
 						CreatedOnToolsVersion = 7.3.1;
 					};
@@ -231,62 +147,28 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				7D6307981D5AB85900DCEA6C /* LercTiler */,
 				7DBB8C761D5D6AFE005B7A34 /* LercTilerCmd */,
 			);
 		};
 /* End PBXProject section */
 
-/* Begin PBXResourcesBuildPhase section */
-		7D6307971D5AB85900DCEA6C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7D6307A31D5AB85900DCEA6C /* Assets.xcassets in Resources */,
-				7D6307A61D5AB85900DCEA6C /* MainMenu.xib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
-		7D6307951D5AB85900DCEA6C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7DBB8C891D5D7355005B7A34 /* logger.cc in Sources */,
-				7DBB8C841D5D6C72005B7A34 /* lerc_util.cc in Sources */,
-				7D6307A11D5AB85900DCEA6C /* main.m in Sources */,
-				7D63079E1D5AB85900DCEA6C /* AppDelegate.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		7DBB8C731D5D6AFE005B7A34 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7DDB0F5E1D6D9B840064FF3C /* main.cc in Sources */,
 				7DBB8C8A1D5D7355005B7A34 /* logger.cc in Sources */,
-				7DBB8C7A1D5D6AFE005B7A34 /* main.cc in Sources */,
 				7DBB8C851D5D6C72005B7A34 /* lerc_util.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXVariantGroup section */
-		7D6307A41D5AB85900DCEA6C /* MainMenu.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				7D6307A51D5AB85900DCEA6C /* Base */,
-			);
-			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		7D6307A81D5AB85900DCEA6C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7DBB8C7F1D5D6BFD005B7A34 /* mac_common.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -331,6 +213,7 @@
 		};
 		7D6307A91D5AB85900DCEA6C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7DBB8C7F1D5D6BFD005B7A34 /* mac_common.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -366,32 +249,6 @@
 			};
 			name = Release;
 		};
-		7D6307AB1D5AB85900DCEA6C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7D6307D21D5AC0B200DCEA6C /* mac_debug.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = LercTiler/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.gagogroup.LercTiler;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		7D6307AC1D5AB85900DCEA6C /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7DBB8C801D5D6BFD005B7A34 /* mac_release.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = LercTiler/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.gagogroup.LercTiler;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		7DBB8C7C1D5D6AFE005B7A34 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7D6307D21D5AC0B200DCEA6C /* mac_debug.xcconfig */;
@@ -402,7 +259,7 @@
 		};
 		7DBB8C7D1D5D6AFE005B7A34 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7DBB8C801D5D6BFD005B7A34 /* mac_release.xcconfig */;
+			baseConfigurationReference = 7D6307D21D5AC0B200DCEA6C /* mac_debug.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -416,15 +273,6 @@
 			buildConfigurations = (
 				7D6307A81D5AB85900DCEA6C /* Debug */,
 				7D6307A91D5AB85900DCEA6C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		7D6307AA1D5AB85900DCEA6C /* Build configuration list for PBXNativeTarget "LercTiler" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				7D6307AB1D5AB85900DCEA6C /* Debug */,
-				7D6307AC1D5AB85900DCEA6C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -36,6 +36,7 @@ NS_GAGO_BEGIN
 bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::string& output_path,
                                double max_z_error, LercVersion lerc_ver, DataType data_type,
                                uint16_t band) {
+  Logger::LogD("Encoding %s", path_to_file.c_str());
   TIFF* tif = TIFFOpen(path_to_file.c_str(), "r");
   if (tif == nullptr) {
     Logger::LogD("ERROR when TIFFOpen %s\n", path_to_file.c_str());
@@ -51,7 +52,6 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
   TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width);
   TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height);
   TIFFGetField(tif, TIFFTAG_DATATYPE, &tiff_dt);
-  Logger::LogD("Get TIFF data type is %d", tiff_dt);
   
   uint32_t type_size = 0;
   if (tiff_dt == SAMPLEFORMAT_INT) {

@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-// Expect command is : ./LercTilerCmd --input <folder_name> --output <folder_name> --band <band> --maxzerror <max_z_error>
+// Expect command is : ./<this_cmd> --input <folder_name> --output <folder_name> --band <band> --maxzerror <max_z_error>
 
 #include <sys/types.h>
 #include <sys/stat.h>
