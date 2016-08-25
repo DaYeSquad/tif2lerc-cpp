@@ -45,7 +45,8 @@ const char *get_filename_ext(const char *filename) {
 }
 
 void list_files_do_stuff(const char* name, int level, const std::string& input_path,
-                         const std::string& output_path, double max_z_error, int band) {
+                         const std::string& output_path, double max_z_error, int band,
+                         bool signed_type) {
   DIR *dir;
   struct dirent *entry;
   
@@ -70,9 +71,8 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
       create_directory(spec_output_folder.c_str());
       
       // continue
-      list_files_do_stuff(path, level + 1, input_path, output_path, max_z_error, band);
-    }
-    else {
+      list_files_do_stuff(path, level + 1, input_path, output_path, max_z_error, band, signed_type);
+    } else {
       if ((0 == strcmp("tif", get_filename_ext(entry->d_name))) ||
           (0 == strcmp("tiff", get_filename_ext(entry->d_name)))) { // allow tif and tiff extension
         // destination path
@@ -91,7 +91,8 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
                                                       max_z_error,
                                                       gago::LercUtil::LercVersion::V2_3,
                                                       gago::LercUtil::DataType::UNKNOWN,
-                                                      band);
+                                                      band,
+                                                      signed_type);
         if (!success) {
           gago::Logger::LogD("%s encode failed", file_path.c_str());
         }
@@ -106,6 +107,7 @@ int main(int argc, const char * argv[]) {
   std::string output_folder_path;
   uint32_t band = 0;
   double max_z_error = 0; // losses
+  bool signed_type = false;
   
   // parse input arguments
   for (int i = 0; i < argc; ++i) {
@@ -117,6 +119,10 @@ int main(int argc, const char * argv[]) {
       band = atoi(argv[i + 1]);
     } else if (0 == strcmp("--maxzerror", argv[i])) {
       max_z_error = atof(argv[i + 1]);
+    } else if (0 == strcmp("--signed", argv[i])) {
+      if (0 == strcmp("true", argv[i])) {
+        signed_type = true;
+      }
     }
   }
   
@@ -136,7 +142,8 @@ int main(int argc, const char * argv[]) {
                       input_folder_path,
                       output_folder_path,
                       max_z_error,
-                      band);
+                      band,
+                      signed_type);
   
   gago::Logger::LogD("DONE");
   

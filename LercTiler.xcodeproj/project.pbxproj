@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D1730961D6E769600B62AC1 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7D1730951D6E769600B62AC1 /* AppDelegate.mm */; };
+		7D1730991D6E769600B62AC1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D1730981D6E769600B62AC1 /* main.m */; };
+		7D17309B1D6E769600B62AC1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D17309A1D6E769600B62AC1 /* Assets.xcassets */; };
+		7D17309E1D6E769600B62AC1 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D17309C1D6E769600B62AC1 /* MainMenu.xib */; };
+		7D1730A31D6E776800B62AC1 /* lerc_util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7DBB8C821D5D6C72005B7A34 /* lerc_util.cc */; };
+		7D1730A41D6E776800B62AC1 /* logger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7DBB8C871D5D7355005B7A34 /* logger.cc */; };
 		7DBB8C851D5D6C72005B7A34 /* lerc_util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7DBB8C821D5D6C72005B7A34 /* lerc_util.cc */; };
 		7DBB8C8A1D5D7355005B7A34 /* logger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7DBB8C871D5D7355005B7A34 /* logger.cc */; };
 		7DDB0F5E1D6D9B840064FF3C /* main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7DDB0F5D1D6D9B840064FF3C /* main.cc */; };
@@ -25,6 +31,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7D1730921D6E769500B62AC1 /* LercTilerJSONCodec.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LercTilerJSONCodec.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D1730941D6E769600B62AC1 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		7D1730951D6E769600B62AC1 /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
+		7D1730981D6E769600B62AC1 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		7D17309A1D6E769600B62AC1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7D17309D1D6E769600B62AC1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		7D17309F1D6E769600B62AC1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7DBB8C771D5D6AFE005B7A34 /* LercTilerCmd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LercTilerCmd; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DBB8C821D5D6C72005B7A34 /* lerc_util.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lerc_util.cc; sourceTree = "<group>"; };
 		7DBB8C831D5D6C72005B7A34 /* lerc_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lerc_util.h; sourceTree = "<group>"; };
@@ -39,6 +52,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		7D17308F1D6E769500B62AC1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7DBB8C741D5D6AFE005B7A34 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -49,6 +69,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7D1730931D6E769600B62AC1 /* LercTilerJSONCodec */ = {
+			isa = PBXGroup;
+			children = (
+				7D1730941D6E769600B62AC1 /* AppDelegate.h */,
+				7D1730951D6E769600B62AC1 /* AppDelegate.mm */,
+				7D17309A1D6E769600B62AC1 /* Assets.xcassets */,
+				7D17309C1D6E769600B62AC1 /* MainMenu.xib */,
+				7D17309F1D6E769600B62AC1 /* Info.plist */,
+				7D1730971D6E769600B62AC1 /* Supporting Files */,
+			);
+			path = LercTilerJSONCodec;
+			sourceTree = "<group>";
+		};
+		7D1730971D6E769600B62AC1 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				7D1730981D6E769600B62AC1 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		7D6307901D5AB85900DCEA6C = {
 			isa = PBXGroup;
 			children = (
@@ -57,6 +98,7 @@
 				7DBB8C6E1D5D6941005B7A34 /* Config */,
 				7DBB8C811D5D6C1C005B7A34 /* core */,
 				7DBB8C781D5D6AFE005B7A34 /* LercTilerCmd */,
+				7D1730931D6E769600B62AC1 /* LercTilerJSONCodec */,
 			);
 			sourceTree = "<group>";
 		};
@@ -64,6 +106,7 @@
 			isa = PBXGroup;
 			children = (
 				7DBB8C771D5D6AFE005B7A34 /* LercTilerCmd */,
+				7D1730921D6E769500B62AC1 /* LercTilerJSONCodec.app */,
 			);
 			name = Products;
 			path = ..;
@@ -103,6 +146,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		7D1730911D6E769500B62AC1 /* LercTilerJSONCodec */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7D1730A21D6E769600B62AC1 /* Build configuration list for PBXNativeTarget "LercTilerJSONCodec" */;
+			buildPhases = (
+				7D17308E1D6E769500B62AC1 /* Sources */,
+				7D17308F1D6E769500B62AC1 /* Frameworks */,
+				7D1730901D6E769500B62AC1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LercTilerJSONCodec;
+			productName = LercTilerJSONCodec;
+			productReference = 7D1730921D6E769500B62AC1 /* LercTilerJSONCodec.app */;
+			productType = "com.apple.product-type.application";
+		};
 		7DBB8C761D5D6AFE005B7A34 /* LercTilerCmd */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7DBB8C7B1D5D6AFE005B7A34 /* Build configuration list for PBXNativeTarget "LercTilerCmd" */;
@@ -129,6 +189,9 @@
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Frank Lin";
 				TargetAttributes = {
+					7D1730911D6E769500B62AC1 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
 					7DBB8C761D5D6AFE005B7A34 = {
 						CreatedOnToolsVersion = 7.3.1;
 					};
@@ -148,11 +211,35 @@
 			projectRoot = "";
 			targets = (
 				7DBB8C761D5D6AFE005B7A34 /* LercTilerCmd */,
+				7D1730911D6E769500B62AC1 /* LercTilerJSONCodec */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		7D1730901D6E769500B62AC1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D17309B1D6E769600B62AC1 /* Assets.xcassets in Resources */,
+				7D17309E1D6E769600B62AC1 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		7D17308E1D6E769500B62AC1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D1730991D6E769600B62AC1 /* main.m in Sources */,
+				7D1730A41D6E776800B62AC1 /* logger.cc in Sources */,
+				7D1730961D6E769600B62AC1 /* AppDelegate.mm in Sources */,
+				7D1730A31D6E776800B62AC1 /* lerc_util.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7DBB8C731D5D6AFE005B7A34 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -165,7 +252,43 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		7D17309C1D6E769600B62AC1 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				7D17309D1D6E769600B62AC1 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
+		7D1730A01D6E769600B62AC1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7DDB0F621D6DA0E60064FF3C /* mac_debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = LercTilerJSONCodec/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.gagogroup.LercTilerJSONCodec;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		7D1730A11D6E769600B62AC1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = LercTilerJSONCodec/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.gagogroup.LercTilerJSONCodec;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		7D6307A81D5AB85900DCEA6C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7DDB0F611D6DA0E60064FF3C /* mac_common.xcconfig */;
@@ -267,6 +390,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		7D1730A21D6E769600B62AC1 /* Build configuration list for PBXNativeTarget "LercTilerJSONCodec" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D1730A01D6E769600B62AC1 /* Debug */,
+				7D1730A11D6E769600B62AC1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		7D6307941D5AB85900DCEA6C /* Build configuration list for PBXProject "LercTiler" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

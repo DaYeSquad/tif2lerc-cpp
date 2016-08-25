@@ -45,11 +45,18 @@ public:
   };
   
   enum class DataType {
-    UNKNOWN = -1,
-    FLOAT = 0,
-    BYTE = 1,
-    INT = 2,
+    CHAR = 0,
+    BYTE,
+    SHORT,
+    USHORT,
+    INT,
+    UINT,
+    FLOAT,
+    DOUBLE,
+    UNKNOWN,
   };
+  
+  //enum DataType { DT_Char, DT_Byte, DT_Short, DT_UShort, DT_Int, DT_UInt, DT_Float, DT_Double, DT_Undefined };
   
   // TIFF --------------------------------------------------------
   
@@ -62,12 +69,13 @@ public:
    *  @param lerc_ver     LERC version number, only supports V2_3 right now.
    *  @param data_type    Can be FLOAT or BYTE.
    *  @param band         Band of TIFF, grayscale is 1, RGB is 3 and RGBA is 4.
+   *  @param signed_type  If each pixel in TIFF is signed or unsigned, default is unsigned.
    *
    *  @return Returns false if encodes failed.
    */
   static bool EncodeTiffOrDie(const std::string& path_to_file, const std::string& output_path,
                               double max_z_error, LercVersion lerc_ver, DataType data_type,
-                              uint16_t band);
+                              uint16_t band, bool signed_type=false);
   
 private:
   

@@ -36,8 +36,6 @@ Contributors:  Thomas Maurer
 
 NAMESPACE_LERC_START
 
-#define TryHuffman
-
 /**   Lerc2 v1
  *
  *    -- allow for lossless compression of all common data types
@@ -177,7 +175,7 @@ private:
   DataType GetDataTypeUsed(int typeCode) const;
 
   bool WriteVariableDataType(Byte** ppByte, double z, DataType dtUsed) const;
-  
+
   double ReadVariableDataType(const Byte** ppByte, DataType dtUsed) const;
 
   template<class T>
@@ -286,7 +284,7 @@ unsigned int Lerc2::ComputeNumBytesNeededToWrite(const T* arr, double maxZError,
         m_huffmanCodes.resize(0);    // if huffman lost on first run, reset it
     }
   }
-  
+
   if (nBytesOneSweep <= nBytes)
   {
     m_writeDataOneSweep = true;    // fallback: write data binary uncompressed in one sweep
@@ -514,7 +512,7 @@ bool Lerc2::WriteTiles(const T* data, Byte** ppByte, int& numBytes, double& zMin
     }
     else    // encode Lerc2, not Huffman
     {
-      **ppByte = 0;    // write out flag Lerc2, proceed below with Lerc2 ... 
+      **ppByte = 0;    // write out flag Lerc2, proceed below with Lerc2 ...
       (*ppByte)++;
     }
   }
