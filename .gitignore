@@ -62,3 +62,6 @@ Makefile
 cmake_install.cmake
 install_manifest.txt
 CTestTestfile.cmake
+
+# CMake in this project
+vendor/lerc/src/liblerc.a
