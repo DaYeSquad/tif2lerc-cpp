@@ -36,6 +36,7 @@ DerivedData
 *.class
 
 # generated files
+bin/
 gen/
 
 # Local configuration file (sdk path, etc)
@@ -65,3 +66,4 @@ CTestTestfile.cmake
 
 # CMake in this project
 vendor/lerc/src/liblerc.a
+lerctiler
