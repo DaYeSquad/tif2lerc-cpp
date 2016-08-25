@@ -22,6 +22,8 @@
 
 #include "lerc_util.h"
 
+#include <stdio.h>
+
 #include "tiffio.h"
 
 #include "Lerc/Lerc.h"
