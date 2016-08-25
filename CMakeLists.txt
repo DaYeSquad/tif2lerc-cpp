@@ -28,24 +28,32 @@ project (lerctiler)
 
 file (GLOB core_src ${CMAKE_CURRENT_SOURCE_DIR}/core/*.cc)
 
-if (APPLE)
+add_library (lerc STATIC IMPORTED)
+add_library (tiff STATIC IMPORTED)
+
+add_executable(lerctiler ${core_src} ${CMAKE_CURRENT_SOURCE_DIR}/proj.cmd/main.cc)
+
+if (APPLE) # macOS (iOS is not supported)
   include_directories (${CMAKE_CURRENT_SOURCE_DIR}/core
                        ${CMAKE_CURRENT_SOURCE_DIR}/vendor/lerc/include/mac
                        ${CMAKE_CURRENT_SOURCE_DIR}/vendor/libtiff/include/mac)
 
   set (BIN_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin/mac)
   set (CMAKE_CXX_FLAGS "-std=c++11")
-elseif (UNIX AND NOT APPLE)
-  #TODO
+
+  target_link_libraries (lerctiler ${CMAKE_CURRENT_SOURCE_DIR}/vendor/libtiff/prebuilt/mac/libtiff.a)
+  target_link_libraries (lerctiler ${CMAKE_CURRENT_SOURCE_DIR}/vendor/lerc/prebuilt/mac/liblerc.a)
+elseif (UNIX AND NOT APPLE) # linux
+  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/core
+                       ${CMAKE_CURRENT_SOURCE_DIR}/vendor/lerc/include/linux
+                       ${CMAKE_CURRENT_SOURCE_DIR}/vendor/libtiff/include/linux)
+
+  set (BIN_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin/linux)
+  set (CMAKE_CXX_FLAGS "-std=c++11")
+
+  target_link_libraries (lerctiler ${CMAKE_CURRENT_SOURCE_DIR}/vendor/libtiff/prebuilt/linux/64-bit/libtiff.a)
+  target_link_libraries (lerctiler ${CMAKE_CURRENT_SOURCE_DIR}/vendor/lerc/prebuilt/linux/liblerc.a)
 endif (APPLE)
-
-add_library (lerc STATIC IMPORTED)
-add_library (tiff STATIC IMPORTED)
-
-add_executable(lerctiler ${core_src} ${CMAKE_CURRENT_SOURCE_DIR}/proj.cmd/main.cc)
-
-target_link_libraries (lerctiler ${CMAKE_CURRENT_SOURCE_DIR}/vendor/libtiff/prebuilt/mac/libtiff.a)
-target_link_libraries (lerctiler ${CMAKE_CURRENT_SOURCE_DIR}/vendor/lerc/prebuilt/mac/liblerc.a)
 
 # link native libz
 find_package (ZLIB REQUIRED)
