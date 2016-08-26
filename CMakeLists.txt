@@ -28,10 +28,11 @@ project (lerctiler)
 
 file (GLOB core_src ${CMAKE_CURRENT_SOURCE_DIR}/core/*.cc)
 
-add_library (lerc STATIC IMPORTED)
+# Build liblerc.
+add_subdirectory (${CMAKE_CURRENT_SOURCE_DIR}/vendor/lerc/src)
 add_library (tiff STATIC IMPORTED)
 
-add_executable(lerctiler ${core_src} ${CMAKE_CURRENT_SOURCE_DIR}/proj.cmd/main.cc)
+add_executable (lerctiler ${core_src} ${CMAKE_CURRENT_SOURCE_DIR}/proj.cmd/main.cc)
 
 if (APPLE) # macOS (iOS is not supported)
   include_directories (${CMAKE_CURRENT_SOURCE_DIR}/core
