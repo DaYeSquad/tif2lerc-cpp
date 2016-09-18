@@ -61,11 +61,18 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
     return;
   
   do {
-    gago::Logger::LogD("!!! - %s is %d", entry->d_name, entry->d_type);
+    bool isDir = false;
+    if (entry->d_type == DT_UNKNOWN) {
+      struct stat st;
+      if (stat(name, &st) == 0) {
+        isDir = S_ISDIR(st.st_mode);
+      }
+    } else if (entry->d_type == DT_DIR) {
+      isDir = true;
+    }
     
-    if (entry->d_type == DT_DIR) {
+    if (isDir) {
       gago::Logger::LogD("DEBUG - step2/ DIR - working %s", entry->d_name);
-      
       char path[1024];
       int len = snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
       path[len] = 0;
