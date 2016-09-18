@@ -49,9 +49,6 @@ const char *get_filename_ext(const char *filename) {
 void list_files_do_stuff(const char* name, int level, const std::string& input_path,
                          const std::string& output_path, double max_z_error, int band,
                          bool signed_type) {
-  gago::Logger::LogD("DEBUG - working %s", name);
-  gago::Logger::LogD("DT_DIR is %d, DT_UNKOWN is %d", DT_DIR, DT_UNKNOWN);
-  
   DIR *dir;
   struct dirent *entry;
   
@@ -62,14 +59,16 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
   
   do {
     bool isDir = false;
-    if (entry->d_type == DT_UNKNOWN) {
-      struct stat st;
-      if (stat(name, &st) == 0) {
-        isDir = S_ISDIR(st.st_mode);
-      }
-    } else if (entry->d_type == DT_DIR) {
+#if SKR_PLATFORM==SKR_PLATFORM_MAC
+    if (entry->d_type == DT_DIR) {
       isDir = true;
     }
+#else
+    struct stat st;
+    if (stat(name, &st) == 0) {
+      isDir = S_ISDIR(st.st_mode);
+    }
+#endif
     
     if (isDir) {
       gago::Logger::LogD("DEBUG - step2/ DIR - working %s", entry->d_name);

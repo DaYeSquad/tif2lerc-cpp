@@ -42,6 +42,8 @@ if (APPLE) # macOS (iOS is not supported)
   set (BIN_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin/mac)
   set (CMAKE_CXX_FLAGS "-std=c++11")
 
+  add_definitions(-DSKR_PLATFORM=SKR_PLATFORM_MAC)
+
   target_link_libraries (lerctiler ${CMAKE_CURRENT_SOURCE_DIR}/vendor/libtiff/prebuilt/mac/libtiff.a)
   target_link_libraries (lerctiler ${CMAKE_CURRENT_SOURCE_DIR}/vendor/lerc/prebuilt/mac/liblerc.a)
 elseif (UNIX AND NOT APPLE) # linux
@@ -51,6 +53,8 @@ elseif (UNIX AND NOT APPLE) # linux
 
   set (BIN_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin/linux)
   set (CMAKE_CXX_FLAGS "-std=c++11")
+
+  add_definitions(-DSKR_PLATFORM=SKR_PLATFORM_LINUX)
 
   target_link_libraries (lerctiler ${CMAKE_CURRENT_SOURCE_DIR}/vendor/libtiff/prebuilt/linux/64-bit/libtiff.a)
   target_link_libraries (lerctiler ${CMAKE_CURRENT_SOURCE_DIR}/vendor/lerc/prebuilt/linux/liblerc.a)
