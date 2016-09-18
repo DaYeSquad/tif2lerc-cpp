@@ -92,6 +92,8 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
         spec_output_folder += entry->d_name;
         std::string file_path = spec_output_folder;
         
+        gago::Logger::LogD("DEBUG - step3/ FILE - working %s", file_path.c_str());
+        
         size_t lastindex = spec_output_folder.find_last_of(".");
         std::string dest_file_name = spec_output_folder.substr(0, lastindex);
         dest_file_name += ".lerc";
