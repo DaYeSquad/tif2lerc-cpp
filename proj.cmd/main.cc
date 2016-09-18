@@ -83,10 +83,11 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
       // continue
       list_files_do_stuff(path, level + 1, input_path, output_path, max_z_error, band, signed_type);
     } else {
-      gago::Logger::LogD("DEBUG - step2/ FILE - working %s", name);
+      gago::Logger::LogD("DEBUG - step2/ FILE - working %s", entry->d_name);
       
       if ((0 == strcmp("tif", get_filename_ext(entry->d_name))) ||
-          (0 == strcmp("tiff", get_filename_ext(entry->d_name)))) { // allow tif and tiff extension
+          (0 == strcmp("tiff", get_filename_ext(entry->d_name))) ||
+          (0 == strcmp("", get_filename_ext(entry->d_name)))) { // allow tif and tiff extension
         // destination path
         std::string spec_output_folder = name;
         spec_output_folder += "/";
