@@ -50,6 +50,7 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
                          const std::string& output_path, double max_z_error, int band,
                          bool signed_type) {
   gago::Logger::LogD("DEBUG - working %s", name);
+  gago::Logger::LogD("DT_DIR is %d, DT_UNKOWN is %d", DT_DIR, DT_UNKNOWN);
   
   DIR *dir;
   struct dirent *entry;
