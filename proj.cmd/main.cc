@@ -60,14 +60,9 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
   do {
     bool isDir = false;
 #if SKR_PLATFORM==SKR_PLATFORM_MAC
-//    if (entry->d_type == DT_DIR) {
-//      isDir = true;
-//    }
-    struct stat st;
-    char filename[512];
-    snprintf(filename, sizeof(filename), "%s/%s", name, entry->d_name);
-    lstat(filename, &st);
-    isDir = S_ISDIR(st.st_mode);
+    if (entry->d_type == DT_DIR) {
+      isDir = true;
+    }
 #else
     struct stat st;
     char filename[512];
@@ -77,7 +72,6 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
 #endif
     
     if (isDir) {
-      gago::Logger::LogD("DEBUG - step2/ DIR - working %s", entry->d_name);
       char path[1024];
       int len = snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
       path[len] = 0;
@@ -94,8 +88,6 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
       // continue
       list_files_do_stuff(path, level + 1, input_path, output_path, max_z_error, band, signed_type);
     } else {
-      gago::Logger::LogD("DEBUG - step2/ FILE - working %s", entry->d_name);
-      
       if ((0 == strcmp("tif", get_filename_ext(entry->d_name))) ||
           (0 == strcmp("tiff", get_filename_ext(entry->d_name)))) { // allow tif and tiff extension
         // destination path
@@ -103,8 +95,6 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
         spec_output_folder += "/";
         spec_output_folder += entry->d_name;
         std::string file_path = spec_output_folder;
-        
-        gago::Logger::LogD("DEBUG - step3/ FILE - working %s", file_path.c_str());
         
         size_t lastindex = spec_output_folder.find_last_of(".");
         std::string dest_file_name = spec_output_folder.substr(0, lastindex);

@@ -31,6 +31,7 @@
 #define SKR_PLATFORM_ANDROID            2
 #define SKR_PLATFORM_MAC                3
 #define SKR_PLATFORM_WIN32              5
+#define SKR_PLATFORM_LINUX              6
 
 // DISALLOW_COPY_AND_ASSIGN
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
