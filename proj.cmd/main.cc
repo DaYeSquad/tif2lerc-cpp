@@ -70,9 +70,10 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
     isDir = S_ISDIR(st.st_mode);
 #else
     struct stat st;
-    if (stat(name, &st) == 0) {
-      isDir = S_ISDIR(st.st_mode);
-    }
+    char filename[512];
+    snprintf(filename, sizeof(filename), "%s/%s", name, entry->d_name);
+    lstat(filename, &st);
+    isDir = S_ISDIR(st.st_mode);
 #endif
     
     if (isDir) {
