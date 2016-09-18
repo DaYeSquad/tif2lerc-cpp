@@ -42,6 +42,7 @@ void create_directory(const char* directory) {
 }
 
 const char *get_filename_ext(const char *filename) {
+  gago::Logger::LogD("get_filename_ext %s", filename);
   const char *dot = strrchr(filename, '.');
   if(!dot || dot == filename) return "";
   return dot + 1;
