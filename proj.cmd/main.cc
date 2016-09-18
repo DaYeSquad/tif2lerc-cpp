@@ -59,9 +59,9 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
   if (!(entry = readdir(dir)))
     return;
   
-  gago::Logger::LogD("!!! - %s is %d", entry->d_name, entry->d_type);
-  
   do {
+    gago::Logger::LogD("!!! - %s is %d", entry->d_name, entry->d_type);
+    
     if (entry->d_type == DT_DIR) {
       gago::Logger::LogD("DEBUG - step2/ DIR - working %s", entry->d_name);
       
