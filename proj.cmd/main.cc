@@ -60,8 +60,12 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
   if (!(entry = readdir(dir)))
     return;
   
+  gago::Logger::LogD("DEBUG - step1 - working %s", name);
+  
   do {
     if (entry->d_type == DT_DIR) {
+      gago::Logger::LogD("DEBUG - step2/ DIR - working %s", name);
+      
       char path[1024];
       int len = snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
       path[len] = 0;
@@ -78,6 +82,8 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
       // continue
       list_files_do_stuff(path, level + 1, input_path, output_path, max_z_error, band, signed_type);
     } else {
+      gago::Logger::LogD("DEBUG - step2/ FILE - working %s", name);
+      
       if ((0 == strcmp("tif", get_filename_ext(entry->d_name))) ||
           (0 == strcmp("tiff", get_filename_ext(entry->d_name)))) { // allow tif and tiff extension
         // destination path
