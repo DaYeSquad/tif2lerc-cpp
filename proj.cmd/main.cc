@@ -34,6 +34,7 @@
 #include "lerc_util.h"
 
 void create_directory(const char* directory) {
+  gago::Logger::LogD("create directory %s", directory);
   struct stat st = {0};
   if (stat(directory, &st) == -1) {
     mkdir(directory, 0700);
@@ -49,6 +50,8 @@ const char *get_filename_ext(const char *filename) {
 void list_files_do_stuff(const char* name, int level, const std::string& input_path,
                          const std::string& output_path, double max_z_error, int band,
                          bool signed_type) {
+  gago::Logger::LogD("DEBUG - working %s", name);
+  
   DIR *dir;
   struct dirent *entry;
   
