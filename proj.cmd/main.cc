@@ -34,7 +34,6 @@
 #include "lerc_util.h"
 
 void create_directory(const char* directory) {
-  gago::Logger::LogD("create directory %s", directory);
   struct stat st = {0};
   if (stat(directory, &st) == -1) {
     mkdir(directory, 0700);
@@ -42,7 +41,6 @@ void create_directory(const char* directory) {
 }
 
 const char *get_filename_ext(const char *filename) {
-  gago::Logger::LogD("get_filename_ext %s", filename);
   const char *dot = strrchr(filename, '.');
   if(!dot || dot == filename) return "";
   return dot + 1;
@@ -61,12 +59,8 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
   if (!(entry = readdir(dir)))
     return;
   
-  gago::Logger::LogD("DEBUG - step1 - working %s", name);
-  
   do {
     if (entry->d_type == DT_DIR) {
-      gago::Logger::LogD("DEBUG - step2/ DIR - working %s", name);
-      
       char path[1024];
       int len = snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
       path[len] = 0;
@@ -86,8 +80,7 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
       gago::Logger::LogD("DEBUG - step2/ FILE - working %s", entry->d_name);
       
       if ((0 == strcmp("tif", get_filename_ext(entry->d_name))) ||
-          (0 == strcmp("tiff", get_filename_ext(entry->d_name))) ||
-          (0 == strcmp("", get_filename_ext(entry->d_name)))) { // allow tif and tiff extension
+          (0 == strcmp("tiff", get_filename_ext(entry->d_name)))) { // allow tif and tiff extension
         // destination path
         std::string spec_output_folder = name;
         spec_output_folder += "/";
