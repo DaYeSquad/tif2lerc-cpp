@@ -61,6 +61,8 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
   
   do {
     if (entry->d_type == DT_DIR) {
+      gago::Logger::LogD("DEBUG - step2/ DIR - working %s", entry->d_name);
+      
       char path[1024];
       int len = snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
       path[len] = 0;
