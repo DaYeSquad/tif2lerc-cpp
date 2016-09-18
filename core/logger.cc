@@ -35,7 +35,7 @@ static const int kMaxLogLen = 2048;
 // Log to console --------------------------------------------------------
 
 void Logger::LogD(const char*format, ... ) {
-#ifdef LOG_DEBUG
+//#ifdef LOG_DEBUG
   printf("");
   char buf[kMaxLogLen+1] = {0};
   va_list ap;
@@ -44,7 +44,7 @@ void Logger::LogD(const char*format, ... ) {
   va_end(ap);
   printf("%s", buf);
   printf("\n");
-#endif
+//#endif
 }
 
 NS_GAGO_END
