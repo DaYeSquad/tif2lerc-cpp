@@ -60,9 +60,14 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
   do {
     bool isDir = false;
 #if SKR_PLATFORM==SKR_PLATFORM_MAC
-    if (entry->d_type == DT_DIR) {
-      isDir = true;
-    }
+//    if (entry->d_type == DT_DIR) {
+//      isDir = true;
+//    }
+    struct stat st;
+    char filename[512];
+    snprintf(filename, sizeof(filename), "%s/%s", name, entry->d_name);
+    lstat(filename, &st);
+    isDir = S_ISDIR(st.st_mode);
 #else
     struct stat st;
     if (stat(name, &st) == 0) {
