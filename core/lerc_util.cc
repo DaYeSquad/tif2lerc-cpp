@@ -61,23 +61,33 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
   uint32_t type_size = 0;
   if (tiff_dt == SAMPLEFORMAT_INT) {
     if (bits_per_sample == 8) {
-      data_type = signed_type ? DataType::CHAR : DataType::BYTE;
+      data_type = DataType::CHAR;
       type_size = sizeof(int8_t);
     } else if (bits_per_sample == 16) {
-      data_type = signed_type ? DataType::SHORT : DataType::USHORT;
+      data_type = DataType::SHORT;
       type_size = sizeof(int16_t);
     } else if (bits_per_sample == 32) {
       data_type = DataType::INT;
       type_size = sizeof(int32_t);
     } else {
-      Logger::LogD("Unknown bits per sample %s", path_to_file.c_str());
+      Logger::LogD("Unknown INT bits per sample %s", path_to_file.c_str());
     }
   } else if (tiff_dt == SAMPLEFORMAT_IEEEFP) {
     data_type = DataType::FLOAT;
     type_size = sizeof(float);
   } else if (tiff_dt == SAMPLEFORMAT_UINT) {
-    data_type = DataType::UINT;
-    type_size = sizeof(uint32_t);
+    if (bits_per_sample == 8) {
+      data_type = DataType::BYTE;
+      type_size = sizeof(uint8_t);
+    } else if (bits_per_sample == 16) {
+      data_type = DataType::USHORT;
+      type_size = sizeof(uint16_t);
+    } else if (bits_per_sample == 32) {
+      data_type = DataType::UINT;
+      type_size = sizeof(uint32_t);
+    } else {
+      Logger::LogD("Unknown UINT bits per sample %s", path_to_file.c_str());
+    }
   } else {
     Logger::LogD("Unsupported TIFF data format %d, %s", tiff_dt, path_to_file.c_str());
     return false;
@@ -107,9 +117,6 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
   // convert data type to proper one
   LercNS::Lerc::DataType lerc_dt = static_cast<LercNS::Lerc::DataType>(data_type);
   if (lerc_dt == LercNS::Lerc::DataType::DT_Double ||
-      lerc_dt == LercNS::Lerc::DataType::DT_Char ||
-      lerc_dt == LercNS::Lerc::DataType::DT_Short ||
-      lerc_dt == LercNS::Lerc::DataType::DT_UShort ||
       lerc_dt == LercNS::Lerc::DataType::DT_Undefined) {
     Logger::LogD("ERROR input data type %s\n", path_to_file.c_str());
     return false;
