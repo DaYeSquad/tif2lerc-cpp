@@ -55,8 +55,10 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
   
   TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width);
   TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height);
-  TIFFGetField(tif, TIFFTAG_DATATYPE, &tiff_dt);
+  TIFFGetField(tif, TIFFTAG_SAMPLEFORMAT, &tiff_dt);
   TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &bits_per_sample);
+  
+  // Logger::LogD("TIFF sample format is %u, bits per sample is %u", tiff_dt, bits_per_sample);
   
   uint32_t type_size = 0;
   if (tiff_dt == SAMPLEFORMAT_INT) {

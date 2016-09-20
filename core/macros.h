@@ -93,4 +93,7 @@ void operator=(const TypeName&)
 // Break if
 #define SKR_BREAK_IF(XXXX) if(XXXX)break;
 
+// SKR_DEBUG_LOG_DATA
+#define SKR_DEBUG_LOG_DATA
+
 #endif /* LERC_CORE_MACROS_H_ */

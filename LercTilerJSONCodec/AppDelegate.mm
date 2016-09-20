@@ -13,7 +13,7 @@
 #include "tiffio.h"
 #include "lerc_util.h"
 
-NSString *inputTiffPath = @"/Users/FrankLin/Documents/Xcode/gago/geotiff2lerc/data/test_bytes.tiff";
+NSString *inputTiffPath = @"/Users/FrankLin/Downloads/test_ndvi/tiff/22.tiff";
 
 NSString *inputPngPath = @"/Users/FrankLin/Documents/Xcode/gago/png2lerc/test2.png";
 
@@ -75,10 +75,10 @@ static void pngReadCallback(png_structp png_ptr, png_bytep data, png_size_t leng
   
   TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width);
   TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height);
-  TIFFGetField(tif, TIFFTAG_DATATYPE, &tiff_dt);
+  TIFFGetField(tif, TIFFTAG_SAMPLEFORMAT, &tiff_dt);
   TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &bits_per_sample);
   
-  uint32_t type_size = sizeof(uint8_t);
+  uint32_t type_size = sizeof(int16_t);
   NSLog(@"width is %@, height is %@, data type is %@, bits per sample %@",
         @(width), @(height), @(tiff_dt), @(bits_per_sample));
   
@@ -90,20 +90,29 @@ static void pngReadCallback(png_structp png_ptr, png_bytep data, png_size_t leng
   
   size_t line_size = TIFFScanlineSize(tif);
   
+  // CHANGE
+  int16_t max_value = 0;
+  int16_t min_value = 0;
+  
   for (int row = 0; row < height; ++row) {
     buf = _TIFFmalloc(line_size);
     TIFFReadScanline(tif, buf, row, bits_per_sample);
     
     // CHANGE
-    uint8_t *pixels = static_cast<uint8_t*>(buf);
+    int16_t *pixels = static_cast<int16_t*>(buf);
     for (int i = 0; i < line_size / type_size; i++) {
       [jsonValues addObject:@(pixels[i])];
+      
+      max_value = MAX(pixels[i], max_value);
+      min_value = MIN(pixels[i], min_value);
     }
     
     memcpy(data + width * row * type_size, buf, line_size);
     
     _TIFFfree(buf);
   }
+  
+  NSLog(@"The max value is %d, min value is %d", max_value, min_value);
   
   TIFFClose(tif);
   
