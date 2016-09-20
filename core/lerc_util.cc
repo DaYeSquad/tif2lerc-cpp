@@ -67,16 +67,19 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
       data_type = signed_type ? DataType::SHORT : DataType::USHORT;
       type_size = sizeof(int16_t);
     } else if (bits_per_sample == 32) {
-      data_type = signed_type ? DataType::INT : DataType::UINT;
+      data_type = DataType::INT;
       type_size = sizeof(int32_t);
     } else {
       Logger::LogD("Unknown bits per sample %s", path_to_file.c_str());
     }
   } else if (tiff_dt == SAMPLEFORMAT_IEEEFP) {
     data_type = DataType::FLOAT;
-    type_size = 4;
+    type_size = sizeof(float);
+  } else if (tiff_dt == SAMPLEFORMAT_UINT) {
+    data_type = DataType::UINT;
+    type_size = sizeof(uint32_t);
   } else {
-    Logger::LogD("Unsupported TIFF data format %s", path_to_file.c_str());
+    Logger::LogD("Unsupported TIFF data format %d, %s", tiff_dt, path_to_file.c_str());
     return false;
   }
   
