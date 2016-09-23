@@ -39,6 +39,8 @@
 struct RawImage {
   uint32_t width;
   uint32_t height;
+  uint32_t len;
+  uint32_t band;
   gago::LercUtil::DataType data_type;
   std::vector<unsigned char> raw_data;
 };
@@ -66,6 +68,8 @@ void write_raw_data_to_file(const struct RawImage& raw_image, const std::string&
   fwrite(&raw_image.width, sizeof(uint32_t), 1, fp);
   fwrite(&raw_image.height, sizeof(uint32_t), 1, fp);
   fwrite(&raw_image.data_type, sizeof(int), 1, fp);
+  fwrite(&raw_image.len, sizeof(uint32_t), 1, fp);
+  fwrite(&raw_image.band, sizeof(uint32_t), 1, fp);
   fwrite(&raw_image.raw_data[0], sizeof(unsigned char), raw_image.raw_data.size(), fp);
   
   fclose(fp);
@@ -203,6 +207,8 @@ int main(int argc, const char * argv[]) {
         raw_image.width = width;
         raw_image.height = height;
         raw_image.data_type = dt;
+        raw_image.len = static_cast<uint32_t>(raw_data.size());
+        raw_image.band = band;
         raw_image.raw_data = raw_data;
         
         write_raw_data_to_file(raw_image, output_path);
