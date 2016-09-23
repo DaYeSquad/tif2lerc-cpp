@@ -18,3 +18,9 @@ The default install path is in ./bin folder.
 
 1. Open terminal
 2. ./lerctiler --input <path_to_tiff_folder> --output <path_to_output_folder> --band <band_as_int> --maxzerror <max_z_error>
+
+
+## RAW DATA
+
+1. Open terminal
+2. ./lerctiler --input <path_to_tiff_folder> --output <path_to_output_folder> --band <band_as_int> --maxzerror <max_z_error> --rawdata
