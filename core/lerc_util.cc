@@ -28,6 +28,8 @@
 
 #include "Lerc/Lerc.h"
 
+using std::vector;
+
 NS_GAGO_BEGIN
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -35,10 +37,9 @@ NS_GAGO_BEGIN
 
 // Tiff --------------------------------------------------------
 
-bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::string& output_path,
-                               double max_z_error, LercVersion lerc_ver, DataType data_type,
-                               uint16_t band, bool signed_type) {
-  Logger::LogD("Encoding %s", path_to_file.c_str());
+bool LercUtil::ReadTiffOrDie(const std::string& path_to_file, uint32_t* img_width,
+                             uint32_t* img_height, DataType* data_type,
+                             std::vector<unsigned char>* raw_data) {
   TIFF* tif = TIFFOpen(path_to_file.c_str(), "r");
   if (tif == nullptr) {
     Logger::LogD("ERROR when TIFFOpen %s\n", path_to_file.c_str());
@@ -58,34 +59,37 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
   TIFFGetField(tif, TIFFTAG_SAMPLEFORMAT, &tiff_dt);
   TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &bits_per_sample);
   
+  if (img_width) *img_width = width;
+  if (img_height) *img_height = height;
+  
   // Logger::LogD("TIFF sample format is %u, bits per sample is %u", tiff_dt, bits_per_sample);
   
   uint32_t type_size = 0;
   if (tiff_dt == SAMPLEFORMAT_INT) {
     if (bits_per_sample == 8) {
-      data_type = DataType::CHAR;
+      if (data_type) *data_type = DataType::CHAR;
       type_size = sizeof(int8_t);
     } else if (bits_per_sample == 16) {
-      data_type = DataType::SHORT;
+      if (data_type) *data_type = DataType::SHORT;
       type_size = sizeof(int16_t);
     } else if (bits_per_sample == 32) {
-      data_type = DataType::INT;
+      if (data_type) *data_type = DataType::INT;
       type_size = sizeof(int32_t);
     } else {
       Logger::LogD("Unknown INT bits per sample %s", path_to_file.c_str());
     }
   } else if (tiff_dt == SAMPLEFORMAT_IEEEFP) {
-    data_type = DataType::FLOAT;
+    if (data_type) *data_type = DataType::FLOAT;
     type_size = sizeof(float);
   } else if (tiff_dt == SAMPLEFORMAT_UINT) {
     if (bits_per_sample == 8) {
-      data_type = DataType::BYTE;
+      if (data_type) *data_type = DataType::BYTE;
       type_size = sizeof(uint8_t);
     } else if (bits_per_sample == 16) {
-      data_type = DataType::USHORT;
+      if (data_type) *data_type = DataType::USHORT;
       type_size = sizeof(uint16_t);
     } else if (bits_per_sample == 32) {
-      data_type = DataType::UINT;
+      if (data_type) *data_type = DataType::UINT;
       type_size = sizeof(uint32_t);
     } else {
       Logger::LogD("Unknown UINT bits per sample %s", path_to_file.c_str());
@@ -96,7 +100,7 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
   }
   
   // data
-  unsigned char* data = new unsigned char[width * height * type_size];
+  vector<unsigned char>& data = *raw_data;
   
   size_t line_size = TIFFScanlineSize(tif);
   
@@ -104,12 +108,28 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
     buf = _TIFFmalloc(line_size);
     TIFFReadScanline(tif, buf, row, bits_per_sample);
     
-    memcpy(data + width * row * type_size, buf, line_size);
+    data.insert(data.end(), static_cast<unsigned char*>(buf), static_cast<unsigned char*>(buf) + line_size);
     
     _TIFFfree(buf);
   }
   
   TIFFClose(tif);
+  return true;
+}
+
+bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::string& output_path,
+                               double max_z_error, LercVersion lerc_ver, uint16_t band) {
+  Logger::LogD("Encoding %s", path_to_file.c_str());
+  
+  DataType data_type = DataType::UNKNOWN;
+  vector<unsigned char> raw_data;
+  
+  uint32_t width = 0;
+  uint32_t height = 0;
+  
+  if (!ReadTiffOrDie(path_to_file, &width, &height, &data_type, &raw_data)) {
+    return false;
+  }
   
   // compress float buffer to lerc
   size_t num_bytes_needed = 0;
@@ -124,7 +144,7 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
     return false;
   }
   
-  if (!lerc.ComputeBufferSize((void*)data,                   // raw image data, row by row, band by band
+  if (!lerc.ComputeBufferSize((void*)&raw_data[0],                   // raw image data, row by row, band by band
                               lerc_dt,
                               width, height, band,
                               0,                             // set 0 if all pixels are valid
@@ -137,7 +157,7 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
   size_t num_bytes_blob = num_bytes_needed;
   LercNS::Byte* lerc_buffer = new LercNS::Byte[num_bytes_blob];
   
-  if (!lerc.Encode((void*)data,            // raw image data, row by row, band by band
+  if (!lerc.Encode((void*)&raw_data[0],            // raw image data, row by row, band by band
                    lerc_dt,
                    width, height, band,
                    0,                      // 0 if all pixels are valid
@@ -153,9 +173,6 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
   FILE* file = fopen(output_path.c_str(), "wb");
   fwrite(lerc_buffer, 1, num_bytes_written, file); // write bytes
   fclose(file);
-  
-  // clean memory
-  delete[] data;
   
   return true;
 }

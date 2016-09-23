@@ -24,6 +24,7 @@
 #define LERC_CORE_LERC_UTIL_H_
 
 #include <string>
+#include <vector>
 
 #include "macros.h"
 #include "logger.h"
@@ -67,15 +68,26 @@ public:
    *  @param output_path  Output LERC path.
    *  @param max_z_error  Max Z error defined in LERC.
    *  @param lerc_ver     LERC version number, only supports V2_3 right now.
-   *  @param data_type    Can be FLOAT or BYTE.
    *  @param band         Band of TIFF, grayscale is 1, RGB is 3 and RGBA is 4.
-   *  @param signed_type  If each pixel in TIFF is signed or unsigned, default is unsigned.
    *
    *  @return Returns false if encodes failed.
    */
   static bool EncodeTiffOrDie(const std::string& path_to_file, const std::string& output_path,
-                              double max_z_error, LercVersion lerc_ver, DataType data_type,
-                              uint16_t band, bool signed_type=false);
+                              double max_z_error, LercVersion lerc_ver, uint16_t band);
+  
+  /**
+   Read TIFF info, including data type, width, height and pixel data.
+
+   @param path_to_file Input TIFF path.
+   @param width        Image width.
+   @param height       Image height.
+   @param data_type    Image data type.
+   @param raw_data     Pixel data.
+
+   @return Returns false if encodes failed.
+   */
+  static bool ReadTiffOrDie(const std::string& path_to_file, uint32_t* width, uint32_t* height,
+                            DataType* data_type, std::vector<unsigned char>* raw_data);
   
 private:
   

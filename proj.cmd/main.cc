@@ -20,7 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-// Expect command is : ./<this_cmd> --input <folder_name> --output <folder_name> --band <band> --maxzerror <max_z_error>
+// Expect command is : ./<this_cmd> --input <folder_name_with_slash_or_tiff_name_wo_slash>
+//                                  --output <folder_name_with_slash_or_tiff_name_wo_slash>
+//                                  --band <band>
+//                                  --maxzerror <max_z_error>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -38,6 +41,10 @@ void create_directory(const char* directory) {
   if (stat(directory, &st) == -1) {
     mkdir(directory, 0700);
   }
+}
+
+bool is_path_directory(const std::string& path) {
+  return path.back() == '/';
 }
 
 const char *get_filename_ext(const char *filename) {
@@ -105,9 +112,7 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
                                                       dest_file_name,
                                                       max_z_error,
                                                       gago::LercUtil::LercVersion::V2_3,
-                                                      gago::LercUtil::DataType::UNKNOWN,
-                                                      band,
-                                                      signed_type);
+                                                      band);
         if (!success) {
           gago::Logger::LogD("%s encode failed", file_path.c_str());
         }
@@ -118,8 +123,8 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
 }
 
 int main(int argc, const char * argv[]) {
-  std::string input_folder_path;
-  std::string output_folder_path;
+  std::string input_path;
+  std::string output_path;
   uint32_t band = 0;
   double max_z_error = 0; // losses
   bool signed_type = false;
@@ -127,40 +132,57 @@ int main(int argc, const char * argv[]) {
   // parse input arguments
   for (int i = 0; i < argc; ++i) {
     if (0 == strcmp("--input", argv[i])) {
-      input_folder_path = argv[i + 1];
+      input_path = argv[i + 1];
     } else if (0 == strcmp("--output", argv[i])) {
-      output_folder_path = argv[i + 1];
+      output_path = argv[i + 1];
     } else if (0 == strcmp("--band", argv[i])) {
       band = atoi(argv[i + 1]);
     } else if (0 == strcmp("--maxzerror", argv[i])) {
       max_z_error = atof(argv[i + 1]);
-    } else if (0 == strcmp("--signed", argv[i])) {
-      if (0 == strcmp("true", argv[i])) {
-        signed_type = true;
-      }
     }
   }
   
   // give a galance
   gago::Logger::LogD("The input folder path is %s, output lerc files will be inside %s, the TIFF band is %d, max Z error given is %f",
-                     input_folder_path.c_str(),
-                     output_folder_path.c_str(),
+                     input_path.c_str(),
+                     output_path.c_str(),
                      band,
                      max_z_error);
   
-  // create output directory
-  create_directory(output_folder_path.c_str());
+  bool is_directory = is_path_directory(input_path);
+  if (is_directory) {
+    if (!is_path_directory(output_path)) {
+      gago::Logger::LogD("output path should be directory (end with '/')");
+      return EXIT_FAILURE;
+    }
+  }
   
-  // enumerate all files in directory
-  list_files_do_stuff(input_folder_path.c_str(),
-                      0,
-                      input_folder_path,
-                      output_folder_path,
-                      max_z_error,
-                      band,
-                      signed_type);
+  if (is_directory) { // loop directory recursively to covert tiffs to lercs
+    // remove last slash
+    // for compact with previous version implementation
+    input_path = input_path.substr(0, input_path.size() - 1);
+    output_path = output_path.substr(0, output_path.size() - 1);
+    
+    // create output directory
+    create_directory(output_path.c_str());
+    
+    // enumerate all files in directory
+    list_files_do_stuff(input_path.c_str(),
+                        0,
+                        input_path,
+                        output_path,
+                        max_z_error,
+                        band,
+                        signed_type);
+  } else { // treat input path as file and convert tiff to lerc
+    gago::LercUtil::EncodeTiffOrDie(input_path,
+                                    output_path,
+                                    max_z_error,
+                                    gago::LercUtil::LercVersion::V2_3,
+                                    band);
+  }
   
   gago::Logger::LogD("DONE");
-  
+
   return EXIT_SUCCESS;
 }
