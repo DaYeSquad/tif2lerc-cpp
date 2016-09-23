@@ -36,6 +36,13 @@
 
 #include "lerc_util.h"
 
+struct RawImage {
+  uint32_t width;
+  uint32_t height;
+  gago::LercUtil::DataType data_type;
+  std::vector<unsigned char> raw_data;
+};
+
 void create_directory(const char* directory) {
   struct stat st = {0};
   if (stat(directory, &st) == -1) {
@@ -53,9 +60,19 @@ const char *get_filename_ext(const char *filename) {
   return dot + 1;
 }
 
+void write_raw_data_to_file(const struct RawImage& raw_image, const std::string& output_path) {
+  FILE* fp = fopen(output_path.c_str(), "wb");
+  
+  fwrite(&raw_image.width, sizeof(uint32_t), 1, fp);
+  fwrite(&raw_image.height, sizeof(uint32_t), 1, fp);
+  fwrite(&raw_image.data_type, sizeof(int), 1, fp);
+  fwrite(&raw_image.raw_data[0], sizeof(unsigned char), raw_image.raw_data.size(), fp);
+  
+  fclose(fp);
+}
+
 void list_files_do_stuff(const char* name, int level, const std::string& input_path,
-                         const std::string& output_path, double max_z_error, int band,
-                         bool signed_type) {
+                         const std::string& output_path, double max_z_error, int band) {
   DIR *dir;
   struct dirent *entry;
   
@@ -93,7 +110,7 @@ void list_files_do_stuff(const char* name, int level, const std::string& input_p
       create_directory(spec_output_folder.c_str());
       
       // continue
-      list_files_do_stuff(path, level + 1, input_path, output_path, max_z_error, band, signed_type);
+      list_files_do_stuff(path, level + 1, input_path, output_path, max_z_error, band);
     } else {
       if ((0 == strcmp("tif", get_filename_ext(entry->d_name))) ||
           (0 == strcmp("tiff", get_filename_ext(entry->d_name)))) { // allow tif and tiff extension
@@ -127,7 +144,7 @@ int main(int argc, const char * argv[]) {
   std::string output_path;
   uint32_t band = 0;
   double max_z_error = 0; // losses
-  bool signed_type = false;
+  bool output_raw_data = false; // output raw data
   
   // parse input arguments
   for (int i = 0; i < argc; ++i) {
@@ -139,6 +156,8 @@ int main(int argc, const char * argv[]) {
       band = atoi(argv[i + 1]);
     } else if (0 == strcmp("--maxzerror", argv[i])) {
       max_z_error = atof(argv[i + 1]);
+    } else if (0 == strcmp("--rawdata", argv[i])) {
+      output_raw_data = true;
     }
   }
   
@@ -172,14 +191,29 @@ int main(int argc, const char * argv[]) {
                         input_path,
                         output_path,
                         max_z_error,
-                        band,
-                        signed_type);
+                        band);
   } else { // treat input path as file and convert tiff to lerc
-    gago::LercUtil::EncodeTiffOrDie(input_path,
-                                    output_path,
-                                    max_z_error,
-                                    gago::LercUtil::LercVersion::V2_3,
-                                    band);
+    if (output_raw_data) {
+      uint32_t width = 0;
+      uint32_t height = 0;
+      gago::LercUtil::DataType dt;
+      std::vector<unsigned char> raw_data;
+      if (gago::LercUtil::ReadTiffOrDie(input_path, &width, &height, &dt, &raw_data)) {
+        struct RawImage raw_image;
+        raw_image.width = width;
+        raw_image.height = height;
+        raw_image.data_type = dt;
+        raw_image.raw_data = raw_data;
+        
+        write_raw_data_to_file(raw_image, output_path);
+      }
+    } else {
+      gago::LercUtil::EncodeTiffOrDie(input_path,
+                                      output_path,
+                                      max_z_error,
+                                      gago::LercUtil::LercVersion::V2_3,
+                                      band);
+    }
   }
   
   gago::Logger::LogD("DONE");
