@@ -7,8 +7,7 @@ Tif2lerc gives ability to convert tif file to esri lerc format (lerc2 v3) on mac
 
 ```shell
 cd <root_dir>
-cmake .
-make install
+sh ./build.sh
 ```
 
 The default install path is in ./bin folder.
