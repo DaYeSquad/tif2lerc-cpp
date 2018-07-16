@@ -81,13 +81,15 @@ public:
    @param path_to_file Input TIFF path.
    @param width        Image width.
    @param height       Image height.
+   @param dims         Image resolution.
    @param data_type    Image data type.
    @param raw_data     Pixel data.
 
    @return Returns false if encodes failed.
    */
   static bool ReadTiffOrDie(const std::string& path_to_file, uint32_t* width, uint32_t* height,
-                            DataType* data_type, std::vector<unsigned char>* raw_data);
+                            uint32_t* dims, DataType* data_type,
+                            std::vector<unsigned char>* raw_data);
   
 private:
   

@@ -38,7 +38,7 @@ NS_GAGO_BEGIN
 // Tiff --------------------------------------------------------
 
 bool LercUtil::ReadTiffOrDie(const std::string& path_to_file, uint32_t* img_width,
-                             uint32_t* img_height, DataType* data_type,
+                             uint32_t* img_height, uint32_t* img_dims, DataType* data_type,
                              std::vector<unsigned char>* raw_data) {
   TIFF* tif = TIFFOpen(path_to_file.c_str(), "r");
   if (tif == nullptr) {
@@ -66,6 +66,7 @@ bool LercUtil::ReadTiffOrDie(const std::string& path_to_file, uint32_t* img_widt
   
   if (img_width) *img_width = width;
   if (img_height) *img_height = height;
+  if (dims) *img_dims = dims;
   
   // Logger::LogD("TIFF sample format is %u, bits per sample is %u", tiff_dt, bits_per_sample);
   
@@ -131,8 +132,9 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
   
   uint32_t width = 0;
   uint32_t height = 0;
+  uint32_t dims = 0;
   
-  if (!ReadTiffOrDie(path_to_file, &width, &height, &data_type, &raw_data)) {
+  if (!ReadTiffOrDie(path_to_file, &width, &height, &dims, &data_type, &raw_data)) {
     return false;
   }
   
@@ -149,7 +151,7 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
     return false;
   }
   
-  int num_dims = 1;
+  int num_dims = 0;
   
   if (LercNS::ErrCode::Ok != LercNS::Lerc::ComputeCompressedSize((void*)&raw_data[0],                   // raw image data, row by row, band by band
                               3, lerc_dt, num_dims,
