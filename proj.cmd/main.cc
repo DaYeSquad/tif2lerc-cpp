@@ -200,9 +200,10 @@ int main(int argc, const char * argv[]) {
     if (output_raw_data) {
       uint32_t width = 0;
       uint32_t height = 0;
+      uint32_t dims = 0;
       gago::LercUtil::DataType dt;
       std::vector<unsigned char> raw_data;
-      if (gago::LercUtil::ReadTiffOrDie(input_path, &width, &height, &dt, &raw_data)) {
+      if (gago::LercUtil::ReadTiffOrDie(input_path, &width, &height, &dims, &dt, &raw_data)) {
         struct RawImage raw_image;
         raw_image.width = width;
         raw_image.height = height;

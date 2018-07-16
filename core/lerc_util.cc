@@ -59,7 +59,7 @@ bool LercUtil::ReadTiffOrDie(const std::string& path_to_file, uint32_t* img_widt
   TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height);
   TIFFGetField(tif, TIFFTAG_SAMPLEFORMAT, &tiff_dt);
   TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &bits_per_sample);
-  TIFFGetField(tif, TIFFTAG_RESOLUTIONUNIT, &dims);
+  TIFFGetField(tif, TIFFTAG_XRESOLUTION, &dims);
   
   Logger::LogD("TIFF width is %d, height is %d, sampleformat is %d, bitsPerSample is %d, dims is %d", width, height, tiff_dt, bits_per_sample, dims);
   Logger::LogD("is TIFF tiled %d", TIFFIsTiled(tif));
