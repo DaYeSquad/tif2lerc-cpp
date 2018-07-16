@@ -24,7 +24,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-set(CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_FLAGS "-std=c++11")
 
 file (GLOB lerc_src ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 file (GLOB lerc1_decode_src ${CMAKE_CURRENT_SOURCE_DIR}/src/Lerc1Decode/*.cpp)
