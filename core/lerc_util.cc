@@ -138,6 +138,9 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
     return false;
   }
   
+  // TODO(lin.xiaoe.f@gmail.com) replace with real dims
+  dims = 1;
+  
   // compress float buffer to lerc
   unsigned int num_bytes_needed = 0;
   unsigned int num_bytes_written = 0;
