@@ -23,11 +23,12 @@ Contributors:  Thomas Maurer
 
 #include <algorithm>
 #include <queue>
+#include "Defines.h"
 #include "Huffman.h"
 #include "BitStuffer2.h"
 
 using namespace std;
-using namespace LercNS;
+USING_NAMESPACE_LERC
 
 // -------------------------------------------------------------------------- ;
 
@@ -60,7 +61,9 @@ bool Huffman::ComputeCodes(const vector<int>& histo)
   }
 
   m_codeTable.resize(size);
-  memset(&m_codeTable[0], 0, size * sizeof(m_codeTable[0]));
+  std::fill(m_codeTable.begin(), m_codeTable.end(),
+    std::pair<unsigned short, unsigned int>((short)0, 0));
+
   if (!pq.top().TreeToLUT(0, 0, m_codeTable))    // fill the LUT
     return false;
 
@@ -109,7 +112,7 @@ bool Huffman::ComputeCompressedSize(const std::vector<int>& histo, int& numBytes
 
 // -------------------------------------------------------------------------- ;
 
-bool Huffman::SetCodes(const vector<pair<short, unsigned int> >& codeTable)
+bool Huffman::SetCodes(const vector<pair<unsigned short, unsigned int> >& codeTable)
 {
   if (codeTable.empty() || codeTable.size() >= m_maxHistoSize)
     return false;
@@ -120,7 +123,7 @@ bool Huffman::SetCodes(const vector<pair<short, unsigned int> >& codeTable)
 
 // -------------------------------------------------------------------------- ;
 
-bool Huffman::WriteCodeTable(Byte** ppByte) const
+bool Huffman::WriteCodeTable(Byte** ppByte, int lerc2Version) const
 {
   if (!ppByte)
     return false;
@@ -135,7 +138,7 @@ bool Huffman::WriteCodeTable(Byte** ppByte) const
   for (int i = i0; i < i1; i++)
   {
     int k = GetIndexWrapAround(i, size);
-    dataVec[i - i0] = (unsigned int)m_codeTable[k].first;
+    dataVec[i - i0] = m_codeTable[k].first;
   }
 
   // header
@@ -152,29 +155,35 @@ bool Huffman::WriteCodeTable(Byte** ppByte) const
   ptr += len;
 
   BitStuffer2 bitStuffer2;
-  if (!bitStuffer2.EncodeSimple(&ptr, dataVec))    // code lengths, bit stuffed
+  if (!bitStuffer2.EncodeSimple(&ptr, dataVec, lerc2Version))    // code lengths, bit stuffed
     return false;
 
   if (!BitStuffCodes(&ptr, i0, i1))    // variable length codes, bit stuffed
     return false;
-  
+
   *ppByte = ptr;
   return true;
 }
 
 // -------------------------------------------------------------------------- ;
 
-bool Huffman::ReadCodeTable(const Byte** ppByte, int lerc2Version)
+bool Huffman::ReadCodeTable(const Byte** ppByte, size_t& nBytesRemainingInOut, int lerc2Version)
 {
   if (!ppByte || !(*ppByte))
     return false;
 
   const Byte* ptr = *ppByte;
+  size_t nBytesRemaining = nBytesRemainingInOut;
 
   vector<int> intVec(4, 0);
   size_t len = intVec.size() * sizeof(int);
+
+  if (nBytesRemaining < len)
+    return false;
+
   memcpy(&intVec[0], ptr, len);
   ptr += len;
+  nBytesRemaining -= len;
 
   int version = intVec[0];
 
@@ -185,79 +194,98 @@ bool Huffman::ReadCodeTable(const Byte** ppByte, int lerc2Version)
   int i0 = intVec[2];
   int i1 = intVec[3];
 
-  if (i0 >= i1 || size > (int)m_maxHistoSize)
+  if (i0 >= i1 || i0 < 0 || size < 0 || size > (int)m_maxHistoSize)
     return false;
 
-  vector<unsigned int> dataVec(i1 - i0, 0);
-  BitStuffer2 bitStuffer2;
-  if (!bitStuffer2.Decode(&ptr, dataVec, lerc2Version))    // unstuff the code lengths
-    return false;
-
-  m_codeTable.resize(size);
-  memset(&m_codeTable[0], 0, size * sizeof(m_codeTable[0]));
-
-  for (int i = i0; i < i1; i++)
+  try
   {
-    int k = GetIndexWrapAround(i, size);
-    m_codeTable[k].first = (short)dataVec[i - i0];
+    vector<unsigned int> dataVec(i1 - i0, 0);
+    BitStuffer2 bitStuffer2;
+    if (!bitStuffer2.Decode(&ptr, nBytesRemaining, dataVec, lerc2Version))    // unstuff the code lengths
+      return false;
+
+    if (dataVec.size() != static_cast<size_t>(i1 - i0))
+      return false;
+
+    m_codeTable.resize(size);
+    std::fill(m_codeTable.begin(), m_codeTable.end(),
+      std::pair<unsigned short, unsigned int>((short)0, 0));
+
+    if (GetIndexWrapAround(i0, size) >= size || GetIndexWrapAround(i1 - 1, size) >= size)
+      return false;
+
+    for (int i = i0; i < i1; i++)
+    {
+      int k = GetIndexWrapAround(i, size);
+      m_codeTable[k].first = (unsigned short)dataVec[i - i0];
+    }
+
+    if (!BitUnStuffCodes(&ptr, nBytesRemaining, i0, i1))    // unstuff the codes
+      return false;
+
+    *ppByte = ptr;
+    nBytesRemainingInOut = nBytesRemaining;
+    return true;
   }
-
-  if (!BitUnStuffCodes(&ptr, i0, i1))    // unstuff the codes
+  catch (std::bad_alloc&)
+  {
     return false;
-
-  *ppByte = ptr;
-  return true;
+  }
 }
 
 // -------------------------------------------------------------------------- ;
 
 bool Huffman::BuildTreeFromCodes(int& numBitsLUT)
 {
-  int i0, i1, maxLen;
+  int i0 = 0, i1 = 0, maxLen = 0;
   if (!GetRange(i0, i1, maxLen))
     return false;
 
   // build decode LUT using max of 12 bits
   int size = (int)m_codeTable.size();
+  int minNumZeroBits = 32;
 
   bool bNeedTree = maxLen > m_maxNumBitsLUT;
   numBitsLUT = min(maxLen, m_maxNumBitsLUT);
 
+  int sizeLUT = 1 << numBitsLUT;
+
   m_decodeLUT.clear();
-  m_decodeLUT.assign(1 << numBitsLUT, pair<short, short>((short)-1, (short)-1));
+  m_decodeLUT.assign((size_t)sizeLUT, pair<short, short>((short)-1, (short)-1));
 
   for (int i = i0; i < i1; i++)
   {
     int k = GetIndexWrapAround(i, size);
     int len = m_codeTable[k].first;
-    if (len > 0 && len <= numBitsLUT)
+
+    if (len == 0)
+      continue;
+
+    unsigned int code = m_codeTable[k].second;
+
+    if (len <= numBitsLUT)
     {
-      int code = m_codeTable[k].second << (numBitsLUT - len);
+      code <<= (numBitsLUT - len);
+      unsigned int numEntries = 1 << (numBitsLUT - len);
       pair<short, short> entry((short)len, (short)k);
-      int numEntries = 1 << (numBitsLUT - len);
-      for (int j = 0; j < numEntries; j++)
+
+      for (unsigned int j = 0; j < numEntries; j++)
         m_decodeLUT[code | j] = entry;    // add the duplicates
     }
+    else    // for the codes too long for the LUT, count how many leading bits are 0
+    {
+      int shift = 1;
+      while (code >>= 1) shift++;    // large canonical codes start with zero's
+      minNumZeroBits = min(minNumZeroBits, len - shift);
+    }
   }
+
+  m_numBitsToSkipInTree = bNeedTree? minNumZeroBits : 0;
 
   if (!bNeedTree)    // decode LUT covers it all, no tree needed
     return true;
 
-  // go over the codes too long for the LUT and count how many leading bits are 0 for all of them
-  m_numBitsToSkipInTree = 32;
-  for (int i = i0; i < i1; i++)
-  {
-    int k = GetIndexWrapAround(i, size);
-    int len = m_codeTable[k].first;
-
-    if (len > 0 && len > numBitsLUT)    // only codes not in the decode LUT
-    {
-      unsigned int code = m_codeTable[k].second;
-      int shift = 1;
-      while (code >> shift) shift++;
-      m_numBitsToSkipInTree = min(m_numBitsToSkipInTree, len - shift);
-    }
-  }
+  //m_numBitsToSkipInTree = 0;    // to disable skipping the 0 bits
 
   ClearTree();  // if there
 
@@ -319,7 +347,7 @@ void Huffman::ClearTree()
     int n = 0;
     m_root->FreeTree(n);
     delete m_root;
-    m_root = 0;
+    m_root = nullptr;
   }
 }
 
@@ -359,12 +387,14 @@ bool Huffman::GetRange(int& i0, int& i1, int& maxCodeLength) const
 
   // first, check for peak somewhere in the middle with 0 stretches left and right
   int size = (int)m_codeTable.size();
-  int i = 0;
-  while (i < size && m_codeTable[i].first == 0) i++;
-  i0 = i;
-  i = size - 1;
-  while (i >= 0 && m_codeTable[i].first == 0) i--;
-  i1 = i + 1;    // exclusive
+  {
+    int i = 0;
+    while (i < size && m_codeTable[i].first == 0) i++;
+    i0 = i;
+    i = size - 1;
+    while (i >= 0 && m_codeTable[i].first == 0) i--;
+    i1 = i + 1;    // exclusive
+  }
 
   if (i1 <= i0)
     return false;
@@ -442,7 +472,7 @@ bool Huffman::BitStuffCodes(Byte** ppByte, int i0, int i1) const
       else
       {
         bitPos += len - 32;
-        *dstPtr++ |= val >> bitPos;
+        *dstPtr++ |= val >> bitPos;    // bitPos > 0
         *dstPtr = val << (32 - bitPos);
       }
     }
@@ -455,13 +485,17 @@ bool Huffman::BitStuffCodes(Byte** ppByte, int i0, int i1) const
 
 // -------------------------------------------------------------------------- ;
 
-bool Huffman::BitUnStuffCodes(const Byte** ppByte, int i0, int i1)
+bool Huffman::BitUnStuffCodes(const Byte** ppByte, size_t& nBytesRemainingInOut, int i0, int i1)
 {
   if (!ppByte || !(*ppByte))
     return false;
 
+  size_t nBytesRemaining = nBytesRemainingInOut;
+
   const unsigned int* arr = (const unsigned int*)(*ppByte);
   const unsigned int* srcPtr = arr;
+  const size_t sizeUInt = sizeof(*srcPtr);
+
   int size = (int)m_codeTable.size();
   int bitPos = 0;
 
@@ -471,6 +505,9 @@ bool Huffman::BitUnStuffCodes(const Byte** ppByte, int i0, int i1)
     int len = m_codeTable[k].first;
     if (len > 0)
     {
+      if (nBytesRemaining < sizeUInt || len > 32)
+        return false;
+
       m_codeTable[k].second = ((*srcPtr) << bitPos) >> (32 - len);
 
       if (32 - bitPos >= len)
@@ -480,28 +517,45 @@ bool Huffman::BitUnStuffCodes(const Byte** ppByte, int i0, int i1)
         {
           bitPos = 0;
           srcPtr++;
+          nBytesRemaining -= sizeUInt;
         }
       }
       else
       {
         bitPos += len - 32;
         srcPtr++;
-        m_codeTable[k].second |= (*srcPtr) >> (32 - bitPos);
+        nBytesRemaining -= sizeUInt;
+
+        if (nBytesRemaining < sizeUInt)
+          return false;
+
+        m_codeTable[k].second |= (*srcPtr) >> (32 - bitPos);    // bitPos > 0
       }
     }
   }
 
   size_t numUInts = srcPtr - arr + (bitPos > 0 ? 1 : 0);
-  *ppByte += numUInts * sizeof(unsigned int);
+  size_t len = numUInts * sizeUInt;
+
+  if (nBytesRemainingInOut < len)
+    return false;
+
+  *ppByte += len;
+  nBytesRemainingInOut -= len;
+
+  if (nBytesRemaining != nBytesRemainingInOut && nBytesRemaining != nBytesRemainingInOut + sizeUInt)    // the real check
+    return false;
+
   return true;
 }
 
 // -------------------------------------------------------------------------- ;
 
-struct MyLargerThanOp
-{
-  inline bool operator() (const pair<int, int>& p0, const pair<int, int>& p1)  { return p0.first > p1.first; }
-};
+//struct MyLargerThanOp
+//{
+//  inline bool operator() (const pair<int, unsigned int>& p0,
+//                          const pair<int, unsigned int>& p1)  { return p0.first > p1.first; }
+//};
 
 // -------------------------------------------------------------------------- ;
 
@@ -510,26 +564,30 @@ bool Huffman::ConvertCodesToCanonical()
   // from the non canonical code book, create an array to be sorted in descending order:
   //   codeLength * tableSize - index
 
-  int tableSize = (int)m_codeTable.size();
-  vector<pair<int, int> > sortVec(tableSize);
-  memset(&sortVec[0], 0, tableSize * sizeof(pair<int, int>));
+  unsigned int tableSize = (unsigned int)m_codeTable.size();
+  vector<pair<int, unsigned int> > sortVec(tableSize, pair<int, unsigned int>(0, 0));
+  //memset(&sortVec[0], 0, tableSize * sizeof(pair<int, unsigned int>));
 
-  for (int i = 0; i < tableSize; i++)
+  for (unsigned int i = 0; i < tableSize; i++)
     if (m_codeTable[i].first > 0)
-      sortVec[i] = pair<int, int>(m_codeTable[i].first * tableSize - i, i);
+      sortVec[i] = pair<int, unsigned int>(m_codeTable[i].first * tableSize - i, i);
 
   // sort descending
-  std::sort(sortVec.begin(), sortVec.end(), MyLargerThanOp());
+  //std::sort(sortVec.begin(), sortVec.end(), MyLargerThanOp());
+
+  std::sort(sortVec.begin(), sortVec.end(),
+    [](const pair<int, unsigned int>& p0,
+       const pair<int, unsigned int>& p1) { return p0.first > p1.first; });
 
   // create canonical codes and assign to orig code table
-  unsigned int codeCanonical = 0;
-  int index = sortVec[0].second;
-  short codeLen = m_codeTable[index].first;
-  int i = 0;
+  unsigned int index = sortVec[0].second;
+  unsigned short codeLen = m_codeTable[index].first;    // max code length for this table
+  unsigned int i = 0, codeCanonical = 0;
+
   while (i < tableSize && sortVec[i].first > 0)
   {
     index = sortVec[i++].second;
-    short delta = codeLen - m_codeTable[index].first;
+    short delta = codeLen - m_codeTable[index].first;  // difference of 2 consecutive code lengths, >= 0 as sorted
     codeCanonical >>= delta;
     codeLen -= delta;
     m_codeTable[index].second = codeCanonical++;
@@ -539,4 +597,3 @@ bool Huffman::ConvertCodesToCanonical()
 }
 
 // -------------------------------------------------------------------------- ;
-

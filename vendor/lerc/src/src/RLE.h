@@ -33,17 +33,17 @@ NAMESPACE_LERC_START
  *  run length encode a byte array
  *
  *  best case resize factor (all bytes are the same):
- *    (n + 1) * 3 / 32767 + 2  ~= 0.00009
+ *    (((n + 1) * 3 / 32767 + 2) / n) ~= (3 / 32767)  ~= 0.00009
  *
  *  worst case resize factor (no stretch of same bytes):
- *    n + (n + 1) * 2 / 32767 + 2  ~= 1.00006
+ *    ((n + (n + 1) * 2 / 32767 + 2) / n) ~= (1 + 2 / 32767) ~= 1.00006
  */
 
 class RLE
 {
 public:
-  RLE() : m_minNumEven(5) {};
-  virtual ~RLE() {};
+  RLE() : m_minNumEven(5) {}
+  virtual ~RLE() {}
 
   size_t computeNumBytesRLE(const Byte* arr, size_t numBytes) const;
 
@@ -54,16 +54,17 @@ public:
 
   // when done, call
   // delete[] *arr;
-  bool decompress(const Byte* arrRLE, Byte** arr, size_t& numBytes) const;
+  static bool decompress(const Byte* arrRLE, size_t nBytesRemaining, Byte** arr, size_t& numBytes);
 
   // arr already allocated, just fill
-  bool decompress(const Byte* arrRLE, Byte* arr) const;
+  static bool decompress(const Byte* arrRLE, size_t nBytesRemaining, Byte* arr, size_t arrSize);
 
 protected:
   int m_minNumEven;
 
-  void writeCount(short cnt, Byte** ppCnt, Byte** ppDst) const;
-  short readCount(const Byte** ppCnt) const;
+  static void writeCount(short cnt, Byte** ppCnt, Byte** ppDst);
+  static short readCount(const Byte** ppCnt);
+
 };
 
 NAMESPACE_LERC_END

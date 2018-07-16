@@ -36,17 +36,19 @@ Contributors:  Thomas Maurer, Lucian Plesea
 #define NAMESPACE_LERC_END }
 #define USING_NAMESPACE_LERC using namespace LercNS;
 
+#define HAVE_LERC1_DECODE
+
 NAMESPACE_LERC_START
 
 typedef unsigned char Byte;
 
-#ifndef max
-#define max(a,b)      (((a) > (b)) ? (a) : (b))
-#endif
-
-#ifndef min
-#define min(a,b)      (((a) < (b)) ? (a) : (b))
-#endif
+//#ifndef max
+//#define max(a,b)      (((a) > (b)) ? (a) : (b))
+//#endif
+//
+//#ifndef min
+//#define min(a,b)      (((a) < (b)) ? (a) : (b))
+//#endif
 
 #ifdef SWAPB    // define this on big endian system
 

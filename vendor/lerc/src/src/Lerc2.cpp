@@ -22,9 +22,11 @@ Contributors:   Thomas Maurer
                 Lucian Plesea (provided checksum code)
 */
 
+#include "Defines.h"
 #include "Lerc2.h"
 
-using namespace LercNS;
+USING_NAMESPACE_LERC
+using namespace std;
 
 // -------------------------------------------------------------------------- ;
 
@@ -35,33 +37,49 @@ Lerc2::Lerc2()
 
 // -------------------------------------------------------------------------- ;
 
-Lerc2::Lerc2(int nCols, int nRows, const Byte* pMaskBits)
+Lerc2::Lerc2(int nDim, int nCols, int nRows, const Byte* pMaskBits)
 {
   Init();
-  Set(nCols, nRows, pMaskBits);
+  Set(nDim, nCols, nRows, pMaskBits);
+}
+
+// -------------------------------------------------------------------------- ;
+
+bool Lerc2::SetEncoderToOldVersion(int version)
+{
+  if (version < 2 || version > kCurrVersion)
+    return false;
+
+  if (version < 4 && m_headerInfo.nDim > 1)
+    return false;
+
+  m_headerInfo.version = version;
+
+  return true;
 }
 
 // -------------------------------------------------------------------------- ;
 
 void Lerc2::Init()
 {
-  m_currentVersion    = 3;    // 2: added Huffman coding to 8 bit types DT_Char, DT_Byte;
-                              // 3: changed the bit stuffing to using a uint aligned buffer,
-                              //    added Fletcher32 checksum
   m_microBlockSize    = 8;
   m_maxValToQuantize  = 0;
   m_encodeMask        = true;
   m_writeDataOneSweep = false;
+  m_imageEncodeMode   = IEM_Tiling;
 
   m_headerInfo.RawInit();
-  m_headerInfo.version = m_currentVersion;
+  m_headerInfo.version = kCurrVersion;
   m_headerInfo.microBlockSize = m_microBlockSize;
 }
 
 // -------------------------------------------------------------------------- ;
 
-bool Lerc2::Set(int nCols, int nRows, const Byte* pMaskBits)
+bool Lerc2::Set(int nDim, int nCols, int nRows, const Byte* pMaskBits)
 {
+  if (nDim > 1 && m_headerInfo.version < 4)
+    return false;
+
   if (!m_bitMask.SetSize(nCols, nRows))
     return false;
 
@@ -76,6 +94,7 @@ bool Lerc2::Set(int nCols, int nRows, const Byte* pMaskBits)
     m_bitMask.SetAllValid();
   }
 
+  m_headerInfo.nDim  = nDim;
   m_headerInfo.nCols = nCols;
   m_headerInfo.nRows = nRows;
 
@@ -84,93 +103,85 @@ bool Lerc2::Set(int nCols, int nRows, const Byte* pMaskBits)
 
 // -------------------------------------------------------------------------- ;
 
-bool Lerc2::Set(const BitMask& bitMask)
-{
-  m_bitMask = bitMask;
-
-  m_headerInfo.numValidPixel = m_bitMask.CountValidBits();
-  m_headerInfo.nCols = m_bitMask.GetWidth();
-  m_headerInfo.nRows = m_bitMask.GetHeight();
-
-  return true;
-}
+//// if the Lerc2 header should ever shrink in size to less than below, then update it (very unlikely)
+//
+//unsigned int Lerc2::MinNumBytesNeededToReadHeader()
+//{
+//  unsigned int numBytes = (unsigned int)FileKey().length();
+//  numBytes += 7 * sizeof(int);
+//  numBytes += 3 * sizeof(double);
+//  return numBytes;
+//}
 
 // -------------------------------------------------------------------------- ;
 
-// if the Lerc2 header should ever shrink in size to less than below, then update it (very unlikely)
+bool Lerc2::GetHeaderInfo(const Byte* pByte, size_t nBytesRemaining, struct HeaderInfo& hd)
+{
+  if (!pByte || !IsLittleEndianSystem())
+    return false;
 
-unsigned int Lerc2::ComputeMinNumBytesNeededToReadHeader() const
+  return ReadHeader(&pByte, nBytesRemaining, hd);
+}
+
+// -------------------------------------------------------------------------- ;
+// -------------------------------------------------------------------------- ;
+
+unsigned int Lerc2::ComputeNumBytesHeaderToWrite(const struct HeaderInfo& hd)
 {
   unsigned int numBytes = (unsigned int)FileKey().length();
-  numBytes += 7 * sizeof(int);
+  numBytes += 1 * sizeof(int);
+  numBytes += (hd.version >= 3 ? 1 : 0) * sizeof(unsigned int);
+  numBytes += (hd.version >= 4 ? 7 : 6) * sizeof(int);
   numBytes += 3 * sizeof(double);
   return numBytes;
 }
 
 // -------------------------------------------------------------------------- ;
 
-bool Lerc2::GetHeaderInfo(const Byte* pByte, struct HeaderInfo& headerInfo) const
-{
-  if (!pByte)
-    return false;
-
-  if (!IsLittleEndianSystem())
-    return false;
-
-  return ReadHeader(&pByte, headerInfo);
-}
-
-// -------------------------------------------------------------------------- ;
-// -------------------------------------------------------------------------- ;
-
-unsigned int Lerc2::ComputeNumBytesHeaderToWrite() const
-{
-  unsigned int numBytes = (unsigned int)FileKey().length();
-  numBytes += 7 * sizeof(int);
-  numBytes += 1 * sizeof(unsigned int);
-  numBytes += 3 * sizeof(double);
-  return numBytes;
-}
-
-// -------------------------------------------------------------------------- ;
-
-bool Lerc2::WriteHeader(Byte** ppByte) const
+bool Lerc2::WriteHeader(Byte** ppByte, const struct HeaderInfo& hd)
 {
   if (!ppByte)
     return false;
 
-  std::string fileKey = FileKey();
-  const HeaderInfo& hd = m_headerInfo;
+  Byte* ptr = *ppByte;
 
-  std::vector<int> intVec;
+  string fileKey = FileKey();
+  size_t len = fileKey.length();
+  memcpy(ptr, fileKey.c_str(), len);
+  ptr += len;
+
+  memcpy(ptr, &hd.version, sizeof(int));
+  ptr += sizeof(int);
+
+  if (hd.version >= 3)
+  {
+    unsigned int checksum = 0;
+    memcpy(ptr, &checksum, sizeof(unsigned int));    // place holder to be filled by the real check sum later
+    ptr += sizeof(unsigned int);
+  }
+
+  vector<int> intVec;
   intVec.push_back(hd.nRows);
   intVec.push_back(hd.nCols);
+
+  if (hd.version >= 4)
+  {
+    intVec.push_back(hd.nDim);
+  }
+
   intVec.push_back(hd.numValidPixel);
   intVec.push_back(hd.microBlockSize);
   intVec.push_back(hd.blobSize);
   intVec.push_back((int)hd.dt);
 
-  std::vector<double> dblVec;
-  dblVec.push_back(hd.maxZError);
-  dblVec.push_back(hd.zMin);
-  dblVec.push_back(hd.zMax);
-
-  Byte* ptr = *ppByte;
-
-  size_t len = fileKey.length();
-  memcpy(ptr, fileKey.c_str(), len);
-  ptr += len;
-
-  memcpy(ptr, &m_currentVersion, sizeof(int));
-  ptr += sizeof(int);
-
-  unsigned int checksum = 0;
-  memcpy(ptr, &checksum, sizeof(unsigned int));    // place holder to be filled by the real check sum later
-  ptr += sizeof(unsigned int);
-
   len = intVec.size() * sizeof(int);
   memcpy(ptr, &intVec[0], len);
   ptr += len;
+
+  vector<double> dblVec;
+  dblVec.push_back(hd.maxZError);
+  dblVec.push_back(hd.zMin);
+  dblVec.push_back(hd.zMax);
 
   len = dblVec.size() * sizeof(double);
   memcpy(ptr, &dblVec[0], len);
@@ -182,57 +193,82 @@ bool Lerc2::WriteHeader(Byte** ppByte) const
 
 // -------------------------------------------------------------------------- ;
 
-bool Lerc2::ReadHeader(const Byte** ppByte, struct HeaderInfo& headerInfo) const
+bool Lerc2::ReadHeader(const Byte** ppByte, size_t& nBytesRemainingInOut, struct HeaderInfo& hd)
 {
   if (!ppByte || !*ppByte)
     return false;
 
   const Byte* ptr = *ppByte;
+  size_t nBytesRemaining = nBytesRemainingInOut;
 
-  std::string fileKey = FileKey();
-  HeaderInfo& hd = headerInfo;
+  string fileKey = FileKey();
+  size_t keyLen = fileKey.length();
+
   hd.RawInit();
 
-  if (0 != memcmp(ptr, fileKey.c_str(), fileKey.length()))
+  if (nBytesRemaining < keyLen || memcmp(ptr, fileKey.c_str(), keyLen))
     return false;
 
-  ptr += fileKey.length();
+  ptr += keyLen;
+  nBytesRemaining -= keyLen;
 
-  memcpy(&(hd.version), ptr, sizeof(int));
+  if (nBytesRemaining < sizeof(int) || !memcpy(&(hd.version), ptr, sizeof(int)))
+    return false;
+
   ptr += sizeof(int);
+  nBytesRemaining -= sizeof(int);
 
-  if (hd.version > m_currentVersion)    // this reader is outdated
+  if (hd.version > kCurrVersion)    // this reader is outdated
     return false;
 
   if (hd.version >= 3)
   {
-    memcpy(&(hd.checksum), ptr, sizeof(unsigned int));
+    if (nBytesRemaining < sizeof(unsigned int) || !memcpy(&(hd.checksum), ptr, sizeof(unsigned int)))
+      return false;
+
     ptr += sizeof(unsigned int);
+    nBytesRemaining -= sizeof(unsigned int);
   }
 
-  std::vector<int>  intVec(6, 0);
-  std::vector<double> dblVec(3, 0);
+  int nInts = (hd.version >= 4) ? 7 : 6;
+  vector<int> intVec(nInts, 0);
+  vector<double> dblVec(3, 0);
 
   size_t len = sizeof(int) * intVec.size();
-  memcpy(&intVec[0], ptr, len);
+
+  if (nBytesRemaining < len || !memcpy(&intVec[0], ptr, len))
+    return false;
+
   ptr += len;
+  nBytesRemaining -= len;
 
   len = sizeof(double) * dblVec.size();
-  memcpy(&dblVec[0], ptr, len);
-  ptr += len;
 
-  hd.nRows          = intVec[0];
-  hd.nCols          = intVec[1];
-  hd.numValidPixel  = intVec[2];
-  hd.microBlockSize = intVec[3];
-  hd.blobSize       = intVec[4];
-  hd.dt             = static_cast<DataType>(intVec[5]);
+  if (nBytesRemaining < len || !memcpy(&dblVec[0], ptr, len))
+    return false;
+
+  ptr += len;
+  nBytesRemaining -= len;
+
+  int i = 0;
+  hd.nRows          = intVec[i++];
+  hd.nCols          = intVec[i++];
+  hd.nDim           = (hd.version >= 4) ? intVec[i++] : 1;
+  hd.numValidPixel  = intVec[i++];
+  hd.microBlockSize = intVec[i++];
+  hd.blobSize       = intVec[i++];
+  hd.dt             = static_cast<DataType>(intVec[i++]);
 
   hd.maxZError      = dblVec[0];
   hd.zMin           = dblVec[1];
   hd.zMax           = dblVec[2];
 
+  if (hd.nRows <= 0 || hd.nCols <= 0 || hd.nDim <= 0 || hd.numValidPixel < 0 || hd.microBlockSize <= 0 || hd.blobSize <= 0)
+    return false;
+
   *ppByte = ptr;
+  nBytesRemainingInOut = nBytesRemaining;
+
   return true;
 }
 
@@ -278,7 +314,7 @@ bool Lerc2::WriteMask(Byte** ppByte) const
 
 // -------------------------------------------------------------------------- ;
 
-bool Lerc2::ReadMask(const Byte** ppByte)
+bool Lerc2::ReadMask(const Byte** ppByte, size_t& nBytesRemainingInOut)
 {
   if (!ppByte)
     return false;
@@ -288,10 +324,14 @@ bool Lerc2::ReadMask(const Byte** ppByte)
   int h = m_headerInfo.nRows;
 
   const Byte* ptr = *ppByte;
+  size_t nBytesRemaining = nBytesRemainingInOut;
 
   int numBytesMask;
-  memcpy(&numBytesMask, ptr, sizeof(int));
+  if (nBytesRemaining < sizeof(int) || !memcpy(&numBytesMask, ptr, sizeof(int)))
+    return false;
+
   ptr += sizeof(int);
+  nBytesRemaining -= sizeof(int);
 
   if ((numValid == 0 || numValid == w * h) && (numBytesMask != 0))
     return false;
@@ -305,15 +345,21 @@ bool Lerc2::ReadMask(const Byte** ppByte)
     m_bitMask.SetAllValid();
   else if (numBytesMask > 0)    // read it in
   {
+    if (nBytesRemaining < static_cast<size_t>(numBytesMask))
+      return false;
+
     RLE rle;
-    if (!rle.decompress(ptr, m_bitMask.Bits()))
+    if (!rle.decompress(ptr, nBytesRemaining, m_bitMask.Bits(), m_bitMask.Size()))
       return false;
 
     ptr += numBytesMask;
+    nBytesRemaining -= numBytesMask;
   }
   // else use previous mask
 
   *ppByte = ptr;
+  nBytesRemainingInOut = nBytesRemaining;
+
   return true;
 }
 
@@ -324,12 +370,15 @@ bool Lerc2::DoChecksOnEncode(Byte* pBlobBegin, Byte* pBlobEnd) const
   if ((size_t)(pBlobEnd - pBlobBegin) != (size_t)m_headerInfo.blobSize)
     return false;
 
-  int blobSize = (int)(pBlobEnd - pBlobBegin);
-  int nBytes = (int)(FileKey().length() + sizeof(int) + sizeof(unsigned int));    // start right after the checksum entry
-  unsigned int checksum = ComputeChecksumFletcher32(pBlobBegin + nBytes, blobSize - nBytes);
+  if (m_headerInfo.version >= 3)
+  {
+    int blobSize = (int)(pBlobEnd - pBlobBegin);
+    int nBytes = (int)(FileKey().length() + sizeof(int) + sizeof(unsigned int));    // start right after the checksum entry
+    unsigned int checksum = ComputeChecksumFletcher32(pBlobBegin + nBytes, blobSize - nBytes);
 
-  nBytes -= sizeof(unsigned int);
-  memcpy(pBlobBegin + nBytes, &checksum, sizeof(unsigned int));
+    nBytes -= sizeof(unsigned int);
+    memcpy(pBlobBegin + nBytes, &checksum, sizeof(unsigned int));
+  }
 
   return true;
 }
@@ -339,7 +388,7 @@ bool Lerc2::DoChecksOnEncode(Byte* pBlobBegin, Byte* pBlobEnd) const
 // from  https://en.wikipedia.org/wiki/Fletcher's_checksum
 // modified from ushorts to bytes (by Lucian Plesea)
 
-unsigned int Lerc2::ComputeChecksumFletcher32(const Byte* pByte, int len) const
+unsigned int Lerc2::ComputeChecksumFletcher32(const Byte* pByte, int len)
 {
   unsigned int sum1 = 0xffff, sum2 = 0xffff;
   unsigned int words = len / 2;
@@ -370,24 +419,27 @@ unsigned int Lerc2::ComputeChecksumFletcher32(const Byte* pByte, int len) const
 
 // -------------------------------------------------------------------------- ;
 
-struct MyLessThanOp
-{
-  inline bool operator() (const std::pair<unsigned int, unsigned int>& p0,
-                          const std::pair<unsigned int, unsigned int>& p1)  { return p0.first < p1.first; }
-};
+//struct MyLessThanOp
+//{
+//  inline bool operator() (const pair<unsigned int, unsigned int>& p0,
+//                          const pair<unsigned int, unsigned int>& p1)  { return p0.first < p1.first; }
+//};
 
 // -------------------------------------------------------------------------- ;
 
-void Lerc2::SortQuantArray(const std::vector<unsigned int>& quantVec,
-                           std::vector<std::pair<unsigned int, unsigned int> >& sortedQuantVec) const
+void Lerc2::SortQuantArray(const vector<unsigned int>& quantVec, vector<pair<unsigned int, unsigned int> >& sortedQuantVec)
 {
   int numElem = (int)quantVec.size();
   sortedQuantVec.resize(numElem);
 
   for (int i = 0; i < numElem; i++)
-    sortedQuantVec[i] = std::pair<unsigned int, unsigned int>(quantVec[i], i);
+    sortedQuantVec[i] = pair<unsigned int, unsigned int>(quantVec[i], i);
 
-  std::sort(sortedQuantVec.begin(), sortedQuantVec.end(), MyLessThanOp());
+  //std::sort(sortedQuantVec.begin(), sortedQuantVec.end(), MyLessThanOp());
+
+  std::sort(sortedQuantVec.begin(), sortedQuantVec.end(),
+    [](const pair<unsigned int, unsigned int>& p0,
+       const pair<unsigned int, unsigned int>& p1) { return p0.first < p1.first; });
 }
 
 // -------------------------------------------------------------------------- ;

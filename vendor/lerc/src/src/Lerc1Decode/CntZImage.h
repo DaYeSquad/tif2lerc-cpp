@@ -30,10 +30,10 @@ Contributors:  Thomas Maurer
 NAMESPACE_LERC_START
 
 /**	count / z image
-*
-*	count can also be a weight, therefore float;
-*	z can be elevation or intensity;
-*/
+ *
+ *	count can also be a weight, therefore float;
+ *	z can be elevation or intensity;
+ */
 
 class CntZImage : public TImage< CntZ >
 {
@@ -70,8 +70,8 @@ protected:
   bool readCntTile(Byte** ppByte, int i0, int i1, int j0, int j1);
   bool readZTile(Byte** ppByte, int i0, int i1, int j0, int j1, double maxZErrorInFile, float maxZInImg);
 
-  int numBytesFlt(float z) const;    // returns 1, 2, or 4
-  bool readFlt(Byte** ppByte, float& z, int numBytes) const;
+  static int numBytesFlt(float z);    // returns 1, 2, or 4
+  static bool readFlt(Byte** ppByte, float& z, int numBytes);
 
 protected:
 

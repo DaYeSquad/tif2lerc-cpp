@@ -26,7 +26,7 @@
 
 #include "tiffio.h"
 
-#include "Lerc/Lerc.h"
+#include "Lerc.h"
 
 using std::vector;
 
@@ -53,11 +53,16 @@ bool LercUtil::ReadTiffOrDie(const std::string& path_to_file, uint32_t* img_widt
   uint32_t tiff_dt = 0;
   
   uint32_t bits_per_sample = 0;
+  uint32_t dims = 0;
   
   TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width);
   TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height);
   TIFFGetField(tif, TIFFTAG_SAMPLEFORMAT, &tiff_dt);
   TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &bits_per_sample);
+  TIFFGetField(tif, TIFFTAG_RESOLUTIONUNIT, &dims);
+  
+  Logger::LogD("TIFF width is %d, height is %d, sampleformat is %d, bitsPerSample is %d, dims is %d", width, height, tiff_dt, bits_per_sample, dims);
+  Logger::LogD("is TIFF tiled %d", TIFFIsTiled(tif));
   
   if (img_width) *img_width = width;
   if (img_height) *img_height = height;
@@ -132,8 +137,8 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
   }
   
   // compress float buffer to lerc
-  size_t num_bytes_needed = 0;
-  size_t num_bytes_written = 0;
+  unsigned int num_bytes_needed = 0;
+  unsigned int num_bytes_written = 0;
   LercNS::Lerc lerc;
   
   // convert data type to proper one
@@ -144,8 +149,10 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
     return false;
   }
   
-  if (!lerc.ComputeBufferSize((void*)&raw_data[0],                   // raw image data, row by row, band by band
-                              lerc_dt,
+  int num_dims = 1;
+  
+  if (LercNS::ErrCode::Ok != LercNS::Lerc::ComputeCompressedSize((void*)&raw_data[0],                   // raw image data, row by row, band by band
+                              3, lerc_dt, num_dims,
                               width, height, band,
                               0,                             // set 0 if all pixels are valid
                               max_z_error,                   // max coding error per pixel, or precision
@@ -154,11 +161,13 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
     return false;
   }
   
-  size_t num_bytes_blob = num_bytes_needed;
+  unsigned int num_bytes_blob = num_bytes_needed;
   LercNS::Byte* lerc_buffer = new LercNS::Byte[num_bytes_blob];
   
-  if (!lerc.Encode((void*)&raw_data[0],            // raw image data, row by row, band by band
-                   lerc_dt,
+  Logger::LogD("Try to encode dt: %d w: %d h: %d max_z_error %f band %d", lerc_dt, width, height, max_z_error, band);
+  
+  if (LercNS::ErrCode::Ok != LercNS::Lerc::Encode((void*)&raw_data[0],            // raw image data, row by row, band by band
+                   3, lerc_dt, num_dims,
                    width, height, band,
                    0,                      // 0 if all pixels are valid
                    max_z_error,            // max coding error per pixel, or precision

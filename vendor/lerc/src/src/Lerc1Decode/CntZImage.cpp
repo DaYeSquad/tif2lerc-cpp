@@ -22,10 +22,11 @@ Contributors:  Thomas Maurer
 */
 
 #include <cstring>
+#include <algorithm>
 #include "CntZImage.h"
 #include "BitStuffer.h"
-#include "../Common/BitMask.h"
-#include "../Common/RLE.h"
+#include "../BitMask.h"
+#include "../RLE.h"
 
 using namespace std;
 using namespace LercNS;
@@ -162,7 +163,7 @@ bool CntZImage::read(Byte** ppByte, double maxZError, bool onlyHeader, bool only
         // decompress to bit mask
         BitMask bitMask(width_, height_);
         RLE rle;
-        if (!rle.decompress(bArr, (Byte*)bitMask.Bits()))
+        if (!rle.decompress(bArr, width_ * height_ * 2, (Byte*)bitMask.Bits(), bitMask.Size()))
           return false;
 
         CntZ* dstPtr = getData();
@@ -396,7 +397,7 @@ bool CntZImage::readZTile(Byte** ppByte, int i0, int i1, int j0, int j1, double 
           for (int j = j0; j < j1; j++)
           {
             float z = (float)(offset + *srcPtr++ * invScale);
-            dstPtr->z = min(z, maxZInImg);    // make sure we stay in the orig range
+            dstPtr->z = std::min(z, maxZInImg);    // make sure we stay in the orig range
             dstPtr++;
           }
         }
@@ -411,7 +412,7 @@ bool CntZImage::readZTile(Byte** ppByte, int i0, int i1, int j0, int j1, double 
             if (dstPtr->cnt > 0)
             {
               float z = (float)(offset + *srcPtr++ * invScale);
-              dstPtr->z = min(z, maxZInImg);    // make sure we stay in the orig range
+              dstPtr->z = std::min(z, maxZInImg);    // make sure we stay in the orig range
             }
             dstPtr++;
           }
@@ -426,7 +427,7 @@ bool CntZImage::readZTile(Byte** ppByte, int i0, int i1, int j0, int j1, double 
 
 // -------------------------------------------------------------------------- ;
 
-int CntZImage::numBytesFlt(float z) const
+int CntZImage::numBytesFlt(float z)
 {
   short s = (short)z;
   char c = (char)s;
@@ -435,7 +436,7 @@ int CntZImage::numBytesFlt(float z) const
 
 // -------------------------------------------------------------------------- ;
 
-bool CntZImage::readFlt(Byte** ppByte, float& z, int numBytes) const
+bool CntZImage::readFlt(Byte** ppByte, float& z, int numBytes)
 {
   Byte* ptr = *ppByte;
 

@@ -21,14 +21,15 @@ http://github.com/Esri/lerc/
 Contributors:  Thomas Maurer
 */
 
+#include "Defines.h"
 #include "BitMask.h"
 #include <cstring>
 
-using namespace LercNS;
+USING_NAMESPACE_LERC
 
 // -------------------------------------------------------------------------- ;
 
-BitMask::BitMask(const BitMask& src) : m_pBits(0)
+BitMask::BitMask(const BitMask& src) : m_pBits(nullptr)
 {
   SetSize(src.m_nCols, src.m_nRows);
   if (m_pBits && src.m_pBits)
@@ -71,7 +72,7 @@ bool BitMask::SetSize(int nCols, int nRows)
     m_nCols = nCols;
     m_nRows = nRows;
   }
-  return m_pBits != 0;
+  return m_pBits != nullptr;
 }
 
 // -------------------------------------------------------------------------- ;
@@ -101,7 +102,7 @@ int BitMask::CountValidBits() const
 void BitMask::Clear()
 {
   delete[] m_pBits;
-  m_pBits = 0;
+  m_pBits = nullptr;
   m_nCols = 0;
   m_nRows = 0;
 }

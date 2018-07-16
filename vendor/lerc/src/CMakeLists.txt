@@ -24,10 +24,10 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-file (GLOB common_src ${CMAKE_CURRENT_SOURCE_DIR}/src/Common/*.cpp)
-file (GLOB lerc_src ${CMAKE_CURRENT_SOURCE_DIR}/src/Lerc/*.cpp)
+set(CMAKE_CXX_STANDARD 11)
+
+file (GLOB lerc_src ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 file (GLOB lerc1_decode_src ${CMAKE_CURRENT_SOURCE_DIR}/src/Lerc1Decode/*.cpp)
-file (GLOB lerc2_src ${CMAKE_CURRENT_SOURCE_DIR}/src/Lerc2/*.cpp)
 
 file (GLOB common_headers ${CMAKE_CURRENT_SOURCE_DIR}/src/Common/*.h)
 file (GLOB lerc_headrs ${CMAKE_CURRENT_SOURCE_DIR}/src/Lerc/*.h)

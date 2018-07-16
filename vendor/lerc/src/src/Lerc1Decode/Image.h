@@ -25,7 +25,7 @@ Contributors:  Thomas Maurer
 #define IMAGE_H
 
 #include <string>
-#include "../Common/Defines.h"
+#include "../Defines.h"
 
 NAMESPACE_LERC_START
 
