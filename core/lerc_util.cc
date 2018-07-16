@@ -66,7 +66,7 @@ bool LercUtil::ReadTiffOrDie(const std::string& path_to_file, uint32_t* img_widt
   
   if (img_width) *img_width = width;
   if (img_height) *img_height = height;
-  if (dims) *img_dims = dims;
+  if (img_dims) *img_dims = dims;
   
   // Logger::LogD("TIFF sample format is %u, bits per sample is %u", tiff_dt, bits_per_sample);
   
@@ -151,10 +151,8 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
     return false;
   }
   
-  int num_dims = 0;
-  
   if (LercNS::ErrCode::Ok != LercNS::Lerc::ComputeCompressedSize((void*)&raw_data[0],                   // raw image data, row by row, band by band
-                              3, lerc_dt, num_dims,
+                              3, lerc_dt, dims,
                               width, height, band,
                               0,                             // set 0 if all pixels are valid
                               max_z_error,                   // max coding error per pixel, or precision
@@ -169,7 +167,7 @@ bool LercUtil::EncodeTiffOrDie(const std::string& path_to_file, const std::strin
   Logger::LogD("Try to encode dt: %d w: %d h: %d max_z_error %f band %d", lerc_dt, width, height, max_z_error, band);
   
   if (LercNS::ErrCode::Ok != LercNS::Lerc::Encode((void*)&raw_data[0],            // raw image data, row by row, band by band
-                   3, lerc_dt, num_dims,
+                   3, lerc_dt, dims,
                    width, height, band,
                    0,                      // 0 if all pixels are valid
                    max_z_error,            // max coding error per pixel, or precision
